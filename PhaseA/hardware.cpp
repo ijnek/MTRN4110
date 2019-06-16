@@ -25,13 +25,13 @@ auto hardware::digital_pin<pin>::write(hardware::logic_level level) -> void {
 // Set pin to high
 template <hardware::pin_t pin>
 auto hardware::digital_pin<pin>::high() -> void {
-    digitalWrite(pin_number, hardware::logic_level::high);
+    digitalWrite(pin_number, 1);
 }
 
 // Set pin to low
 template <hardware::pin_t pin>
 auto hardware::digital_pin<pin>::low() -> void {
-    digitalWrite(pin_number, hardware::logic_level::low);
+    digitalWrite(pin_number, 0);
 }
 
 // External instantiation for class templates
