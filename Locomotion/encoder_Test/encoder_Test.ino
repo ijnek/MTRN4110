@@ -22,7 +22,7 @@ void setup() {
 }
 
 void loop() {
-  while(millis() - start < 5000){ // Stay in this loop for 5 seconds
+  while(true){ // Stay in this loop for 5 seconds
     int curr = duration;
     
     analogWrite(left_motor_en, 255*0.8); // Go full speed
