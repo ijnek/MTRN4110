@@ -92,8 +92,7 @@ void part2() {
   Display the distance travelled by the wheel 
 */
 void part3() {
-  // Make sure the motor is going backward
-
+  setRightDirection(0); // Make the right motor go backward
   analogWrite(right_motor_en, 255 * 0.4); // Run the right motor at half backward speed
   
   float ppcm = 1920 / (PI * 6.5); // pulses_per_cm = pulse_per_rev * pi*d;
@@ -140,7 +139,7 @@ void part4(int X){
   Lcount = 0;
   int curr_reading = Lcount;
   analogWrite(left_motor_en, 255*0.2);
-  while(abs(curr_reading) < (X*0.9)*5) {
+  while(abs(curr_reading) < abs((X*0.9)*5)) {
     Serial.print("Degree: ");
     Serial.println(curr_reading/5);
     curr_reading = Lcount;
@@ -163,7 +162,7 @@ void part5(int Y){
   Rcount = 0;
   int curr_reading = Rcount;
   analogWrite(right_motor_en, 255*0.2);
-  while(abs(curr_reading) < (Y*0.9)*5) {
+  while(abs(curr_reading) < abs((Y*0.9)*5)) {
     Serial.print("Degree: ");
     Serial.println(curr_reading/5);
     curr_reading = Rcount;
