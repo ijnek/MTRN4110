@@ -1,5 +1,5 @@
 // Send string in the format
-// H111V1011 (2 by 3 maze)
+// H101V1011 (2 by 3 maze)
 // that will print
 //  --- --- ---
 // |   |       |
