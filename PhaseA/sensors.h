@@ -6,8 +6,8 @@
 #include "external_MPU6050_I2Cdev.h"
 #include "external_MPU6050_helper_3dmath.h"
 
-#define TRIGGER_PIN 12     
-#define ECHO_PIN 11
+#define TRIGGER_PIN 25      
+#define ECHO_PIN 26
 #define MAX_DISTANCE 200
 #define OUTPUT_READABLE_YAWPITCHROLL
 #define OUTPUT_READABLE_WORLDACCEL
@@ -17,9 +17,10 @@ unsigned long finish;
 unsigned int front;
 unsigned int left;
 unsigned int right;
-int enablePin1 = 9;   // ========= LEFT LIDAR SENSOR ===========
-int enablePin2 = 8;   // ========= RIGHT LIDAR SENSOR ========
-int enablePin3 = 10;  // ======= FRONT LIDAR SENSOR ===========
+unsigned int frontl;
+int enablePin1 = 22;   // ========= LEFT LIDAR SENSOR ===========
+int enablePin2 = 23;   // ========= RIGHT LIDAR SENSOR ========
+int enablePin3 = 24;  // ======= FRONT LIDAR SENSOR ===========
 int inByte;
 int keyPress;
 // MPU control/status vars

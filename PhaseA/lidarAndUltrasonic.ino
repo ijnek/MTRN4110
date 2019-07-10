@@ -19,7 +19,7 @@ void setup() {
   delay(1000);
 
   // set up first sensor
-  // left lidar, connect to pin 9
+  // left lidar, connect to pin 22
   digitalWrite(enablePin1, HIGH);
   delay(50);
   lidar1.init();
@@ -39,6 +39,7 @@ void setup() {
   delay(50);
   lidar2.init();
   lidar2.configureDefault();
+  lidar2.setAddress(0x31); // change to new address
   lidar2.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 30);
   lidar2.writeReg16Bit(VL6180X::SYSALS__INTEGRATION_PERIOD, 50);
   lidar2.setTimeout(500);
@@ -49,11 +50,11 @@ void setup() {
   delay(100);
 
   // set up the third LiDAR sensor
-   digitalWrite(enablePin1, HIGH);
+  digitalWrite(enablePin3, HIGH);
   delay(50);
   lidar3.init();
   lidar3.configureDefault();
-  lidar3.setAddress(0x31); // change to new address
+  lidar3.setAddress(0x32); // change to new address
   lidar3.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 30);
   lidar3.writeReg16Bit(VL6180X::SYSALS__INTEGRATION_PERIOD, 50);
   lidar3.setTimeout(500);
@@ -67,8 +68,9 @@ void setup() {
 void loop() {
   left = lidar1.readRangeSingleMillimeters();
   right = lidar2.readRangeSingleMillimeters();
+//  frontl = lidar3.readRangeSingleMillimeters();
   front = sonar.ping_cm();
-  myIMU = IMULoop();
+  //myIMU = IMULoop();
 
   if (Serial.available() > 0) {
       inByte = Serial.read();
@@ -106,6 +108,8 @@ void loop() {
     Serial.print("\t");
     Serial.print("Lidar2: ");
     Serial.print(right);
+//    Serial.print("Lidar3: ");
+//    Serial.print(frontl);
     Serial.println();
   }
 
