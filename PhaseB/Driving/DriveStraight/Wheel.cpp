@@ -1,7 +1,7 @@
-#include "Motor.hpp"
+#include "Wheel.hpp"
 #include "Arduino.h"
 
-Motor::Motor(uint8_t encoderPinA, uint8_t encoderPinB, uint8_t motorEn, uint8_t motorDirA, uint8_t motorDirB, bool isLeftMotor)
+Wheel::Wheel(uint8_t encoderPinA, uint8_t encoderPinB, uint8_t motorEn, uint8_t motorDirA, uint8_t motorDirB, bool isLeftWheel)
     : directionIsForwards(true),
       speed(0),
       counter(0),
@@ -10,31 +10,28 @@ Motor::Motor(uint8_t encoderPinA, uint8_t encoderPinB, uint8_t motorEn, uint8_t 
       motorEn(motorEn),
       motorDirA(motorDirA),
       motorDirB(motorDirB),
-      isLeftMotor(isLeftMotor)
+      isLeftWheel(isLeftWheel)
 {
-    // setup encoder
     pinMode(encoderPinB, INPUT);
     attachInterrupt(digitalPinToInterrupt(encoderPinA), speedInterrupt, CHANGE);
-    
-    // setup motor
     pinMode(motorEn, OUTPUT);
     pinMode(motorDirA, OUTPUT);
 }
 
-void Motor::setSpeedByPercentage(float speed) // set speed by percentage of 0-1
+
+void Wheel::setSpeedByPercentage(float speed)  // set speed by percentage of 0-100%
 {
-    setSpeedByUint8_t(255 * speed);
+    setSpeedByUint8_t(255 * (speed / 100.0));
 }
 
-void Motor::setSpeedByUint8_t(uint8_t speed) // set speed directly by uint8_t
+void Wheel::setSpeedByUint8_t(uint8_t speed) // set speed directly by uint8_t
 {
     analogWrite(motorEn, speed);
-    Serial.println(speed);
 }
 
-void Motor::setDirectionToForwards(bool forwards) // set direction to forwards, or backwards
+void Wheel::setDirectionToForwards(bool forwards)
 {
-    if (isLeftMotor)
+    if (isLeftWheel)
     {
         if (forwards)
         {
@@ -60,4 +57,5 @@ void Motor::setDirectionToForwards(bool forwards) // set direction to forwards, 
             digitalWrite(motorDirB, LOW);
         }
     }
+    
 }

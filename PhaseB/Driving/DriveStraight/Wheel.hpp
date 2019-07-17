@@ -1,13 +1,13 @@
-#ifndef MOTOR_HPP
-#define MOTOR_HPP
+#ifndef WHEEL_HPP
+#define WHEEL_HPP
 
 #include <stdint.h>
 
-class Motor
+class Wheel
 {
   public:
-    Motor(uint8_t encoderPinA, uint8_t encoderPinB, uint8_t motorEn, uint8_t motorDirA, uint8_t motorDirB, bool isLeftMotor);
-    void setSpeedByPercentage(float speed);  // set speed by percentage of 0-1
+    Wheel(uint8_t encoderPinA, uint8_t encoderPinB, uint8_t motorEn, uint8_t motorDirA, uint8_t motorDirB, bool isLeftWheel);
+    void setSpeedByPercentage(float speed);  // set speed by percentage of 0-100%
     void setSpeedByUint8_t(uint8_t speed); // set speed directly by uint8_t
     void setDirectionToForwards(bool forwards);    
 
@@ -26,7 +26,7 @@ class Motor
     uint8_t motorDirB;
 
     // whether motor is the left wheel or right wheel
-    bool isLeftMotor;
+    bool isLeftWheel;
 };
 
-#endif // MOTOR_HPP
+#endif // WHEEL_HPP
