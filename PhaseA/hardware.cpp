@@ -67,8 +67,41 @@ auto hardware::digital_pin<pin>::pulse_length (logic_level state = logic_level::
     return timeout;
 }
 
+/**
+ * \brief The set_analog_reference method set the reference voltage for
+ * analog read.
+ * \param ref is the analog reference.
+ */
+template <typename base>
+auto hardware::analog_pin<base>::set_analog_reference (hardware::analog_reference ref) -> void{
+    uint8_t ref_int = static_cast<uint8_t>(ref);
+    analogReference(ref_int);   //void analogReference(uint8_t mode)
+}
+
+/**
+ * \brief The analog_read method analog input.
+ * \return voltage in volts.
+ */
+// template<typename base>
+// auto hardware::analog_pin<base>::analog_read () -> units::volts{
+//     uint8_t pin_number_int = static_cast<uint8_t>(<base> pin_number);
+//     double val = analogRead(pin_number_int); // int analogRead(uint8_t pin)
+    
+//     // For the Arduino Mega, analogRead will return a maximum resolution of 10bits
+//     // Scale val to a voltage between within ref_
+//     // create a new volts object and return it
+// }
+
+
+/**
+ * \brief The enable method initialise the encoder.
+ */
+template <typename pin_a, typename pin_b>
+auto hardware::encoder<pin_a, pin_b>::enable () -> void{
+}
 
 
 
 // External instantiation for class based on digital_pin
 template class hardware::digital_pin<2U>;
+template class hardware::digital_pin<13U>;

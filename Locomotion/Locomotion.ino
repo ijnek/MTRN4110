@@ -6,8 +6,8 @@ void setup() {
 }
 
 void loop() {
-  int X = -120; // degrees
-  int Y = 40; // degrees
+  int X = 720; // degrees
+  int Y = 1800; // degrees
 
   if(Serial.available() > 0) {
     char in = Serial.read(); // Get the number

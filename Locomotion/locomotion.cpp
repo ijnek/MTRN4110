@@ -63,6 +63,7 @@ void part1(){
 void part2() {
   setLeftDirection(1); // Make the left motor go forward
   analogWrite(left_motor_en, 255*0.8); // Run the left motor at full forward speed
+
   
   float ppcm = 1920 / (PI * 6.5); // pulses_per_cm = pulse_per_rev * pi*d;
   float distance = 0;
@@ -84,6 +85,7 @@ void part2() {
     delay(100);
   }
   analogWrite(left_motor_en, 0); // Stop the motor
+  
 }
 
 /*
