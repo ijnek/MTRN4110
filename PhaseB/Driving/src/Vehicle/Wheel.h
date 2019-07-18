@@ -13,9 +13,9 @@ class Wheel
     void encoderInterrupt();
 
   private:
-    bool encoderDetectingClockwiseRotation;
+    bool encoderDetectingForwardsRotation;
     uint8_t speed;
-    int clockwiseCounter;
+    int encoderForwardsCounter;
 
     // addresses to encoder and motor pins on arduino board
     uint8_t encoderPinA;

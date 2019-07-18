@@ -2,10 +2,10 @@
 #include <Arduino.h>
 
 Wheel::Wheel(uint8_t encoderPinA, uint8_t encoderPinB, uint8_t motorEn, uint8_t motorDirA,
-            uint8_t motorDirB, bool isLeftWheel, void (*f)())
-    : encoderDetectingClockwiseRotation(true),
+             uint8_t motorDirB, bool isLeftWheel, void (*f)())
+    : encoderDetectingForwardsRotation(true),
       speed(0),
-      clockwiseCounter(0),
+      encoderForwardsCounter(0),
       encoderPinA(encoderPinA),
       encoderPinB(encoderPinB),
       motorEn(motorEn),
@@ -61,7 +61,7 @@ void Wheel::setDirectionToForwards(bool forwards)
 }
 
 /*
- * Interrupt service for the left wheel encoder
+ * Interrupt service for the wheel encoder
  */
 void Wheel::encoderInterrupt()
 {
@@ -72,31 +72,21 @@ void Wheel::encoderInterrupt()
     if (prevEncoderPinA == LOW && curr_state == HIGH)
     {
         int val = digitalRead(encoderPinB);
-        Serial.print(curr_state);
-        Serial.print(", ");
-        Serial.println(val);
-        if (val == LOW && encoderDetectingClockwiseRotation)
+        if (val == LOW && encoderDetectingForwardsRotation)
         {
-            encoderDetectingClockwiseRotation = false;
-            Serial.println(__LINE__);
+            encoderDetectingForwardsRotation = false;
         }
-        else if (val == HIGH && !encoderDetectingClockwiseRotation)
+        else if (val == HIGH && !encoderDetectingForwardsRotation)
         {
-            encoderDetectingClockwiseRotation = true;
-            Serial.println(__LINE__);
+            encoderDetectingForwardsRotation = true;
         }
     }
-    prevEncoderPinA = curr_state;    
 
-    // Increment/Decrement the count
-    if (encoderDetectingClockwiseRotation)
-        clockwiseCounter++;
+    prevEncoderPinA = curr_state;
+
+    // Increment/Decrementu the count
+    if (encoderDetectingForwardsRotation)
+        encoderForwardsCounter++;
     else
-        clockwiseCounter--;
-
-    Serial.print("curr_state: ");
-    Serial.print(curr_state);
-    Serial.print(", counter: ");
-    Serial.print(clockwiseCounter);
-    Serial.print("\n");
+        encoderForwardsCounter--;
 }

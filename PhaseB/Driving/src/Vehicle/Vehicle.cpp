@@ -26,7 +26,6 @@ static void leftEncoderInterrupt()
     wheelL.encoderInterrupt();
 }
 
-
 static void rightEncoderInterrupt()
 {
     wheelR.encoderInterrupt();
