@@ -1,25 +1,23 @@
 #ifndef VEHICLE_HPP
 #define VEHICLE_HPP
 
-#include "../Vector/Vector.h"
-
-enum DriveCommand
-{
-    FORWARD,  // goes forward one square
-    BACKWARD,  // goes backward one square
-    TURN_LEFT,  // turns left 90 degrees
-    TURN_RIGHT,  // turns right 90 degrees
-};
+#include "../MovementRequest/MovementRequest.h"
+#include "../Blackboard/Blackboard.h"
 
 class Vehicle
 {
   public:
-    Vehicle();
+    Vehicle(Blackboard &blackboard)
+      : blackboard(blackboard) {}
+      
     void tick();
-    void addCommand(DriveCommand driveCommand);
 
   private:
-    Vector<DriveCommand> commandQueue;
+    Blackboard &blackboard;
+    MovementRequest currentCommand;
+    
+    void calculateWheelSpeeds(MovementRequest &movementRequest, float &leftWheelSpeed, float &rightWheelSpeed);
+    Odometry calculateOdometryDiff(int leftCounter, int rightCounter);  // calculate odometry difference since last tick
 };
 
 static void leftEncoderInterrupt();
