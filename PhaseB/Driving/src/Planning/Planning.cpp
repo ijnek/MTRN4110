@@ -8,15 +8,17 @@
 WayPoint waypointsArray[MAX_WAYPOINT_COUNT];
 
 // Definitions of close when going to waypoints
-#define CLOSE_DIST 50  // mm
+#define CLOSE_DIST 40  // mm
 #define CLOSE_DIST_SQUARED CLOSE_DIST*CLOSE_DIST  // mm^2
-#define CLOSE_HEADING DEG2RAD(10)  // rad
+#define CLOSE_HEADING DEG2RAD(3)  // rad
+#define NOT_CLOSE_HEADING DEG2RAD(10)
 
 
 Planning::Planning(Blackboard &blackboard)
   : blackboard(blackboard),
     wayPoints(waypointsArray),
-    wayPointIndex(0)
+    wayPointIndex(0),
+    headingClose(false)
 {
     // Add some waypoints
     wayPoints.push_back(WayPoint(0, 0));
@@ -39,27 +41,58 @@ void Planning::tick()
     float turnVelocity;  // rad / s
 
     // If we're close to the current way point, let's go to next one!
-    if (distanceClose(myX, myY, aimX, aimY))
+    if (distanceIsClose(myX, myY, aimX, aimY))
     {
         wayPointIndex = (wayPointIndex + 1) % wayPoints.size();
-        Serial.print("next way point: waypoint");
-        Serial.print(wayPointIndex);
-        Serial.print(" - ");
-        Serial.print(wayPoints[wayPointIndex].x);
-        Serial.print(", ");
-        Serial.println(wayPoints[wayPointIndex].y);
+        // Serial.print("next way point: waypoint");
+        // Serial.print(wayPointIndex);
+        // Serial.print(" - ");
+        // Serial.print(wayPoints[wayPointIndex].x);
+        // Serial.print(", ");
+        // Serial.println(wayPoints[wayPointIndex].y);
+        headingClose = false;
     }
+
+    float headingErr = headingError(myX, myY, myH, aimX, aimY);
+    float distanceErrSquared = distanceErrorSquared(myX, myY, aimX, aimY);
     
     // If our heading is not close, then correct our heading first
-    if (!headingClose(myX, myY, myH, aimX, aimY))
+    if (!headingIsClose(myX, myY, myH, aimX, aimY))
     {
         forwardVelocity = 0;
-        turnVelocity = headingError(myX, myY, myH, aimX, aimY) / 1.0; // correct heading over 0.3 second (rad/s)
+        if (headingErr > DEG2RAD(30))
+        {
+            turnVelocity = headingErr > 0 ? DEG2RAD(20) : -DEG2RAD(20);
+        }
+        else
+        {
+            turnVelocity = headingErr > 0 ? DEG2RAD(30) : -DEG2RAD(30);
+        }
+        
+        headingClose = false;
     }
     else
     {
-        forwardVelocity = 500;  // (mm/s)
-        turnVelocity = headingError(myX, myY, myH, aimX, aimY) / 1.0;  // correct heading over 0.5 second (rad/s)
+        if (distanceErrSquared < 250.0 * 250.0)
+        {
+            forwardVelocity = 100;
+        }
+        else
+        {
+            forwardVelocity = 200;
+        }
+
+        if (headingErr > DEG2RAD(3))
+        {
+            turnVelocity = headingErr;
+        }
+        else
+        {
+            turnVelocity = 0;
+        }
+        
+        
+        headingClose = true;
     }
 
     blackboard.movementRequest = MovementRequest(forwardVelocity, turnVelocity);
@@ -72,7 +105,7 @@ float Planning::distanceErrorSquared(float currentX, float currentY, float aimX,
     return diffX * diffX + diffY * diffY;
 }
 
-bool Planning::distanceClose(float currentX, float currentY, float aimX, float aimY)
+bool Planning::distanceIsClose(float currentX, float currentY, float aimX, float aimY)
 {
     return distanceErrorSquared(currentX, currentY, aimX, aimY) < CLOSE_DIST_SQUARED;
 }
@@ -84,7 +117,15 @@ float Planning::headingError(float currentX, float currentY, float currentH, flo
     return normaliseTheta(atan2(diffY, diffX) - currentH);
 }
 
-bool Planning::headingClose(float currentX, float currentY, float currentH, float aimX, float aimY)
+bool Planning::headingIsClose(float currentX, float currentY, float currentH, float aimX, float aimY)
 {
-    return fabs(headingError(currentX, currentY, currentH, aimX, aimY)) < CLOSE_HEADING;
+    // Have hysteresis to prevent flickering
+    if (headingClose)
+    {
+        return fabs(headingError(currentX, currentY, currentH, aimX, aimY)) < NOT_CLOSE_HEADING;
+    }
+    else
+    {
+        return fabs(headingError(currentX, currentY, currentH, aimX, aimY)) < CLOSE_HEADING;
+    }
 }

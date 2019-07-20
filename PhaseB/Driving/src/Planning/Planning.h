@@ -15,11 +15,12 @@ class Planning
     Blackboard &blackboard;
     Vector<WayPoint> wayPoints;
     int wayPointIndex;
+    bool headingClose;  // whether our heading is close, used for hysteresis purpose
 
     float distanceErrorSquared(float currentX, float currentY, float aimX, float aimY);
-    bool distanceClose(float currentX, float currentY, float aimX, float aimY);
+    bool distanceIsClose(float currentX, float currentY, float aimX, float aimY);
     float headingError(float currentX, float currentY, float currentH, float aimX, float aimY);
-    bool headingClose(float currentX, float currentY, float currentH, float aimX, float aimY);
+    bool headingIsClose(float currentX, float currentY, float currentH, float aimX, float aimY);
 };
 
 

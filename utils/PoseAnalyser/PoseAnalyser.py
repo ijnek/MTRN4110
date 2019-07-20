@@ -8,6 +8,7 @@ import argparse
 def main():
     args = parseArgs()
     (x_lists, y_lists, theta_lists) = readXYFiles(args.files)
+    plot(x_lists, y_lists, args.files)
 
 
 def parseArgs():
@@ -18,11 +19,9 @@ def parseArgs():
     return parser.parse_args()
 
 
-# plots X, Y coordinates on field image
-def plotField(x_lists, y_lists, filenames):
+# plots X, Y coordinates
+def plot(x_lists, y_lists, filenames):
     fig, ax = plt.subplots()
-    img = plt.imread(os.path.dirname(os.path.realpath(__file__)) + "/field.png")
-    ax.imshow(img, extent=[min(x_lists), max(x_lists), min(y_lists), max(y_lists)])
 
     for i in range(len(x_lists)):
         plt.plot(x_lists[i], y_lists[i], label=filenames[i])
