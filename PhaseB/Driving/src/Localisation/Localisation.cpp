@@ -1,5 +1,6 @@
 #include "Localisation.h"
 #include "../Constants/Constants.h"
+#include "../MathUtil/MathUtil.h"
 
 void Localisation::tick()
 {
@@ -8,5 +9,5 @@ void Localisation::tick()
     Odometry &odometryDiff = blackboard.odometryDiff;
     pose.x += odometryDiff.forward * cos(pose.theta);
     pose.y += odometryDiff.forward * sin(pose.theta);
-    pose.theta = CLAMP(-PI, pose.theta + odometryDiff.turn, PI);
+    pose.theta = normaliseTheta(pose.theta + odometryDiff.turn);
 }

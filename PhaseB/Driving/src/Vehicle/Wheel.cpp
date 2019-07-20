@@ -1,6 +1,7 @@
 #include "Wheel.h"
 #include <Arduino.h>
 #include "../Constants/Constants.h"
+#include "../MathUtil/MathUtil.h"
 
 Wheel::Wheel(uint8_t encoderPinA, uint8_t encoderPinB, uint8_t motorEn, uint8_t motorDirA,
              uint8_t motorDirB, bool isLeftWheel, void (*f)())
