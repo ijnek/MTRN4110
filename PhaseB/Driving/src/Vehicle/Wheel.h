@@ -12,17 +12,14 @@ class Wheel
     void tick();
     void writeSpeedByPercentage(float speed);  // set speed by percentage of 0-100%
     void writeSpeedByUint8_t(uint8_t speed); // set speed directly by uint8_t
-    void setSpeed(float speed);  // set speed by how much wheel should travel in a second (mm/s)
+    void setAngularVelocity(float angularVelocity);  // set angular velocity of wheel (rad/s)
     void setDirectionToForwards(bool forwards); 
     void encoderInterrupt();
-    int getEncoderForwardsCounter();
-    void resetCounterForOdometry();
-    int getCounterForOdometry();
+    int getAndResetCounterForOdometry();
 
-  private:
+private:
     bool encoderDetectingForwardsRotation;
     uint8_t speed;
-    int encoderForwardsCounter;
     int counterForOdometry;
 
     // addresses to encoder and motor pins on arduino board
@@ -38,9 +35,9 @@ class Wheel
     int prevEncoderPinA;
 
     // pid controller values
-    double duration, absDuration; //the number of the pulses detected since last cleared
+    double counts, absCountsPerSecond; //the number of the pulses detected since last cleared
     double output;
-    double setPoint;
+    double setPointCountsPerSecond;  // aim for counts per second
     PID pid;
 };
 

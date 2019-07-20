@@ -2,6 +2,7 @@
 #include "src/Planning/Planning.h"
 #include "src/Vehicle/Vehicle.h"
 #include "src/Localisation/Localisation.h"
+#include "src/Constants/Constants.h"
 
 Blackboard blackboard;
 Planning planning(blackboard);
@@ -16,5 +17,11 @@ void loop() {
     planning.tick();
     vehicle.tick();
     localisation.tick();
-    delay(50);  // remove this later
+
+    // Serial.print("pose: ");
+    // Serial.print(blackboard.worldPose.x);
+    // Serial.print(", ");
+    // Serial.print(blackboard.worldPose.y);
+    // Serial.print(", ");
+    // Serial.println(RAD2DEG(blackboard.worldPose.theta));
 }

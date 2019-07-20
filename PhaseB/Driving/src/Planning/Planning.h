@@ -9,16 +9,10 @@ class Planning
 {
   public:
     Planning(Blackboard &blackboard)
-      : blackboard(blackboard)
-    {
-    }
+      : blackboard(blackboard) {}
 
-    void tick()
-    {
-        float forwardVelocity = 200;  // mm/s
-        float turnVelocity = 0; // rad/s
-        blackboard.movementRequest = MovementRequest(forwardVelocity, turnVelocity);
-    }
+    void tick();
+
   private:
     Blackboard &blackboard;
 };

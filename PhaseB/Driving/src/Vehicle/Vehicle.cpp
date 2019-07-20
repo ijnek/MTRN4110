@@ -13,34 +13,35 @@ Wheel wheelR(ENCODER_PIN_A_R, ENCODER_PIN_B_R, MOTOR_EN_R,
 void Vehicle::tick()
 {
     // Set speed of wheels
-    float leftWheelSpeed;
-    float rightWheelSpeed;
-    calculateWheelSpeeds(blackboard.movementRequest, leftWheelSpeed, rightWheelSpeed);
-    wheelL.setSpeed(leftWheelSpeed);
-    wheelR.setSpeed(rightWheelSpeed);
-    wheelL.setDirectionToForwards(true);
-    wheelR.setDirectionToForwards(true);
+    float leftWheelAngularVelocity;  // left wheel angular velocity (rad/s)
+    float rightWheelAngularVelocity;  // right wheel angular velocity (rad/s)
+    calculateWheelAngularVelocities(blackboard.movementRequest, leftWheelAngularVelocity, rightWheelAngularVelocity);
+    wheelL.setAngularVelocity(leftWheelAngularVelocity);
+    wheelR.setAngularVelocity(rightWheelAngularVelocity);
 
     // Tick the wheels
     wheelL.tick();
     wheelR.tick();
 
     // Update odometry diff
-    blackboard.odometryDiff = calculateOdometryDiff(wheelL.getCounterForOdometry(), wheelR.getCounterForOdometry());
-    wheelL.resetCounterForOdometry();
-    wheelR.resetCounterForOdometry();
+    blackboard.odometryDiff = calculateOdometryDiff(
+        wheelL.getAndResetCounterForOdometry(),
+        wheelR.getAndResetCounterForOdometry());
 }
 
 /*
- * Calculate left and right wheel speeds from movement request
+ * Calculate left and right wheel angular velocities from movement request
  * This is inverse kinematics
  * https://moodle.telt.unsw.edu.au/pluginfile.php/4264059/mod_resource/content/5/1_MTRN4110_Introduction_Locomotion_Perception.v20190604
  */
-void Vehicle::calculateWheelSpeeds(
-    MovementRequest &movementRequest, float &leftWheelSpeed, float &rightWheelSpeed)
+void Vehicle::calculateWheelAngularVelocities(
+    MovementRequest &movementRequest, float &leftWheelAngularVelocity, float &rightWheelAngularVelocity)
 {
-    leftWheelSpeed = movementRequest.forwardVelocity - movementRequest.turnVelocity * DIST_BETWEEN_WHEELS_MM;
-    rightWheelSpeed = movementRequest.forwardVelocity + movementRequest.turnVelocity * DIST_BETWEEN_WHEELS_MM;
+    float leftWheelLinearVelocity = movementRequest.forwardVelocity - movementRequest.turnVelocity * DIST_BETWEEN_WHEELS_MM;
+    float rightWheelLinearVelocity = movementRequest.forwardVelocity + movementRequest.turnVelocity * DIST_BETWEEN_WHEELS_MM;
+    
+    leftWheelAngularVelocity = leftWheelLinearVelocity / WHEEL_RADIUS_MM;
+    rightWheelAngularVelocity = rightWheelLinearVelocity / WHEEL_RADIUS_MM;
 }
 
 static void leftEncoderInterrupt()
@@ -61,6 +62,6 @@ Odometry Vehicle::calculateOdometryDiff(int leftCounter, int rightCounter)   // 
 
     Odometry odometryDiff;
     odometryDiff.forward = (leftWheelDistance + rightWheelDistance) / 2.0;
-    odometryDiff.turn = atan2(rightWheelDistance - leftWheelDistance, (DIST_BETWEEN_WHEELS_MM * 2.0));
+    odometryDiff.turn = atan2(rightWheelDistance - leftWheelDistance, DIST_BETWEEN_WHEELS_MM);
     return odometryDiff;
 }

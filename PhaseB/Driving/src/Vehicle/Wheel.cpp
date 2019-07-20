@@ -5,8 +5,6 @@
 Wheel::Wheel(uint8_t encoderPinA, uint8_t encoderPinB, uint8_t motorEn, uint8_t motorDirA,
              uint8_t motorDirB, bool isLeftWheel, void (*f)())
     : encoderDetectingForwardsRotation(true),
-      speed(0),
-      encoderForwardsCounter(0),
       counterForOdometry(0),
       encoderPinA(encoderPinA),
       encoderPinB(encoderPinB),
@@ -15,11 +13,11 @@ Wheel::Wheel(uint8_t encoderPinA, uint8_t encoderPinB, uint8_t motorEn, uint8_t 
       motorDirB(motorDirB),
       isLeftWheel(isLeftWheel),
       prevEncoderPinA(0),
-      duration(0),
-      absDuration(0),
+      counts(0),
+      absCountsPerSecond(0),
       output(0),
-      setPoint(0),
-      pid(&absDuration, &output, &setPoint, MOTOR_K_P, MOTOR_K_I, MOTOR_K_D, DIRECT)
+      setPointCountsPerSecond(0),
+      pid(&absCountsPerSecond, &output, &setPointCountsPerSecond, MOTOR_K_P, MOTOR_K_I, MOTOR_K_D, DIRECT)
 {
     // Setup encoder
     pinMode(encoderPinB, INPUT);
@@ -31,24 +29,24 @@ Wheel::Wheel(uint8_t encoderPinA, uint8_t encoderPinB, uint8_t motorEn, uint8_t 
 
     // Setup pid controller
     pid.SetMode(AUTOMATIC); // PID is set to automatic mode
-    pid.SetSampleTime(100); // Set PID sampling frequency is 100ms
+    pid.SetSampleTime(S_TO_MS(PID_SAMPLE_TIME_S)); // Set PID sampling frequency is 100ms
 }
 
 void Wheel::tick()
 {
-    setPoint = 100;
-    absDuration = abs(duration);
+    absCountsPerSecond = abs(counts) / PID_SAMPLE_TIME_S;
     bool result = pid.Compute(); //PID conversion is complete and returns 1
     if (result)
     {
-        // Serial.print("output: ");
+        // Serial.print("aim: ");
+        // Serial.print(setPointCountsPerSecond);
+        // Serial.print(", absCountsPerSecond: ");
+        // Serial.print(absCountsPerSecond);
+        // Serial.print(", output: ");
         // Serial.println(output);
-        // Serial.print("Pulse: ");
-        // Serial.println(duration);
-        duration = 0; //Count clear, wait for the next count
+        counts = 0; //Count clear, wait for the next count
         writeSpeedByUint8_t(output);
     }
-
 }
 
 void Wheel::writeSpeedByPercentage(float speed) // set speed by percentage of 0-100%
@@ -61,8 +59,10 @@ void Wheel::writeSpeedByUint8_t(uint8_t speed) // set speed directly by uint8_t
     analogWrite(motorEn, speed);
 }
 
-void Wheel::setSpeed(float speed) // set speed by how much wheel should travel in a second (mm/s)
+void Wheel::setAngularVelocity(float angularVelocity) // set angular velocity of wheel (rad/s)
 {
+    setDirectionToForwards(angularVelocity > 0 ? true : false);  // set direction
+    setPointCountsPerSecond = abs(angularVelocity) * ENCODER_COUNTS_PER_REV / RAD_PER_REV;
 }
 
 void Wheel::setDirectionToForwards(bool forwards)
@@ -95,11 +95,6 @@ void Wheel::setDirectionToForwards(bool forwards)
     }
 }
 
-int Wheel::getEncoderForwardsCounter()
-{
-    return encoderForwardsCounter;
-}
-
 /*
  * Interrupt service for the wheel encoder
  */
@@ -127,24 +122,22 @@ void Wheel::encoderInterrupt()
     // Increment/Decrementu the count
     if (encoderDetectingForwardsRotation)
     {
-        encoderForwardsCounter++;
-        duration++;
+        counts++;
         counterForOdometry++;
     }
     else
     {
-        encoderForwardsCounter--;
-        duration--;
+        counts--;
         counterForOdometry--;
     }
 }
 
-void Wheel::resetCounterForOdometry()
+int Wheel::getAndResetCounterForOdometry()
 {
+    // important to reset straight after reading it as below. 
+    // Since interrupts are constantly coming in, if we reset 
+    // it later after reading it, it is possible miss some enocoder counts
+    int c = counterForOdometry;
     counterForOdometry = 0;
-}
-
-int Wheel::getCounterForOdometry()
-{
-    return counterForOdometry;
+    return c;
 }
