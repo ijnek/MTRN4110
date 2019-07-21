@@ -10,4 +10,8 @@ void Localisation::tick()
     pose.x += odometryDiff.forward * cos(pose.theta);
     pose.y += odometryDiff.forward * sin(pose.theta);
     pose.theta = normaliseTheta(pose.theta + odometryDiff.turn);
+    
+    // unsigned long time = millis();
+    // pose.theta = normaliseTheta(pose.theta + blackboard.gyroZ * MS_TO_S(time - lastTime));
+    // lastTime = time;
 }

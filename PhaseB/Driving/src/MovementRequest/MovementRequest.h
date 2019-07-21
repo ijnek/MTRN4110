@@ -4,9 +4,9 @@
 class MovementRequest
 {
   public:
-    MovementRequest(float forwardVelocity=0, float turnVelocity=0) : forwardVelocity(forwardVelocity), turnVelocity(turnVelocity) {}
-    float forwardVelocity;  // velocity forwards (mm/s)
-    float turnVelocity;  // turn velocity clockwise (rad/s)
+    MovementRequest(float forwardAmount=0, float turnAmount=0) : forwardAmount(forwardAmount), turnAmount(turnAmount) {}
+    float forwardAmount;  // (mm)
+    float turnAmount;  // (rad)
 };
 
 #endif // MOVEMENT_REQUEST_H

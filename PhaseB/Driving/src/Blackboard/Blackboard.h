@@ -9,11 +9,12 @@
 class Blackboard
 {
   public:
-    Blackboard(){}
+    Blackboard(): gyroZ(0){}
 
     Odometry odometryDiff;  // difference in odometry since last cycle
     MovementRequest movementRequest;  // current requested velocity
     Pose worldPose;  // pose relative to where we started (world(0, 0, 0) = where we started)
+    float gyroZ;  // gyro z value in rad/s
 };
 
 #endif // BLACKBOARD_H

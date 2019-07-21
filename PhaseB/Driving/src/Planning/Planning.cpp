@@ -8,10 +8,10 @@
 WayPoint waypointsArray[MAX_WAYPOINT_COUNT];
 
 // Definitions of close when going to waypoints
-#define CLOSE_DIST 40  // mm
+#define CLOSE_DIST 50  // mm
 #define CLOSE_DIST_SQUARED CLOSE_DIST*CLOSE_DIST  // mm^2
-#define CLOSE_HEADING DEG2RAD(3)  // rad
-#define NOT_CLOSE_HEADING DEG2RAD(10)
+#define CLOSE_HEADING DEG2RAD(2)  // rad
+#define NOT_CLOSE_HEADING DEG2RAD(5)  // rad
 
 
 Planning::Planning(Blackboard &blackboard)
@@ -20,12 +20,28 @@ Planning::Planning(Blackboard &blackboard)
     wayPointIndex(0),
     headingClose(false)
 {
-    // Add some waypoints
-    wayPoints.push_back(WayPoint(0, 0));
+    // Add some waypoints 
+
+    // Task 1
+    // wayPoints.push_back(WayPoint(0, 0));
+    // wayPoints.push_back(WayPoint(250, 0));
+
+    // // Task 2 (not done)
+    // wayPoints.push_back(WayPoint(0, 0));
+
+    // // Task 3
+    // wayPoints.push_back(WayPoint(6*250, 0));
+
+    // Task 4
     wayPoints.push_back(WayPoint(250, 0));
+    wayPoints.push_back(WayPoint(250, 250));
+    wayPoints.push_back(WayPoint(0, 250));
+    wayPoints.push_back(WayPoint(0, 500));
     wayPoints.push_back(WayPoint(250, 500));
-    wayPoints.push_back(WayPoint(500, 500));
-    wayPoints.push_back(WayPoint(500, 0));
+    wayPoints.push_back(WayPoint(250, 750));
+    wayPoints.push_back(WayPoint(0, 750));
+    wayPoints.push_back(WayPoint(0, 1000)); 
+    wayPoints.push_back(WayPoint(250, 1000));   
 }
 
 void Planning::tick()
@@ -37,8 +53,8 @@ void Planning::tick()
     float aimX = wayPoints[wayPointIndex].x;
     float aimY = wayPoints[wayPointIndex].y;
 
-    float forwardVelocity;  // mm / s
-    float turnVelocity;  // rad / s
+    float forwardAmount;  // mm
+    float turnAmount;  // rad
 
     // If we're close to the current way point, let's go to next one!
     if (distanceIsClose(myX, myY, aimX, aimY))
@@ -50,7 +66,6 @@ void Planning::tick()
         // Serial.print(wayPoints[wayPointIndex].x);
         // Serial.print(", ");
         // Serial.println(wayPoints[wayPointIndex].y);
-        headingClose = false;
     }
 
     float headingErr = headingError(myX, myY, myH, aimX, aimY);
@@ -59,43 +74,18 @@ void Planning::tick()
     // If our heading is not close, then correct our heading first
     if (!headingIsClose(myX, myY, myH, aimX, aimY))
     {
-        forwardVelocity = 0;
-        if (headingErr > DEG2RAD(30))
-        {
-            turnVelocity = headingErr > 0 ? DEG2RAD(20) : -DEG2RAD(20);
-        }
-        else
-        {
-            turnVelocity = headingErr > 0 ? DEG2RAD(30) : -DEG2RAD(30);
-        }
-        
+        forwardAmount = 0;
+        turnAmount = headingErr;
         headingClose = false;
     }
     else
     {
-        if (distanceErrSquared < 250.0 * 250.0)
-        {
-            forwardVelocity = 100;
-        }
-        else
-        {
-            forwardVelocity = 200;
-        }
-
-        if (headingErr > DEG2RAD(3))
-        {
-            turnVelocity = headingErr;
-        }
-        else
-        {
-            turnVelocity = 0;
-        }
-        
-        
+        forwardAmount = sqrtf(distanceErrSquared);
+        turnAmount = headingErr;  // try and adjust by something
         headingClose = true;
     }
 
-    blackboard.movementRequest = MovementRequest(forwardVelocity, turnVelocity);
+    blackboard.movementRequest = MovementRequest(forwardAmount, turnAmount);
 }
 
 float Planning::distanceErrorSquared(float currentX, float currentY, float aimX, float aimY)

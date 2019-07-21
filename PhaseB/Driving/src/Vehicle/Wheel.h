@@ -12,10 +12,10 @@ class Wheel
     void tick();
     void writeSpeedByPercentage(float speed);  // set speed by percentage of 0-100%
     void writeSpeedByUint8_t(uint8_t speed); // set speed directly by uint8_t
-    void setAngularVelocity(float angularVelocity);  // set angular velocity of wheel (rad/s)
     void setDirectionToForwards(bool forwards); 
     void encoderInterrupt();
     int getAndResetCounterForOdometry();
+    void setAngularPosition(float angularPosition);  // set angular position, from start of run (rad)
 
 private:
     bool encoderDetectingForwardsRotation;
@@ -35,9 +35,9 @@ private:
     int prevEncoderPinA;
 
     // pid controller values
-    double counts, absCountsPerSecond; //the number of the pulses detected since last cleared
+    double counts; //the number of the pulses detected since last cleared
     double output;
-    double setPointCountsPerSecond;  // aim for counts per second
+    double setPointCounts;  // aim for counts per second
     PID pid;
 };
 

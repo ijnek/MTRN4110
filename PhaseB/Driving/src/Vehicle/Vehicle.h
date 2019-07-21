@@ -16,7 +16,7 @@ class Vehicle
     Blackboard &blackboard;
     MovementRequest currentCommand;
     
-    void calculateWheelAngularVelocities(MovementRequest &movementRequest, float &leftWheelAngularVelocity, float &rightWheelAngularVelocity);
+    void calculateWheelAngularPositions(MovementRequest &movementRequest, float &leftWheelAngularVelocity, float &rightWheelAngularVelocity);
     Odometry calculateOdometryDiff(int leftCounter, int rightCounter);  // calculate odometry difference since last tick
 };
 

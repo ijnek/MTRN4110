@@ -16,6 +16,7 @@ class Localisation
 
   private:
     Blackboard &blackboard;
+    unsigned long lastTime;
 };
 
 

@@ -3,6 +3,7 @@
 #include "../PinDefs/PinDefs.h"
 #include "Arduino.h"
 #include "../Constants/Constants.h"
+#include "../MathUtil/MathUtil.h"
 
 // Instances of the wheel, had to do it this way because of the static interrupt functions
 Wheel wheelL(ENCODER_PIN_A_L, ENCODER_PIN_B_L, MOTOR_EN_L,
@@ -13,11 +14,12 @@ Wheel wheelR(ENCODER_PIN_A_R, ENCODER_PIN_B_R, MOTOR_EN_R,
 void Vehicle::tick()
 {
     // Set speed of wheels
-    float leftWheelAngularVelocity;  // left wheel angular velocity (rad/s)
-    float rightWheelAngularVelocity;  // right wheel angular velocity (rad/s)
-    calculateWheelAngularVelocities(blackboard.movementRequest, leftWheelAngularVelocity, rightWheelAngularVelocity);
-    wheelL.setAngularVelocity(leftWheelAngularVelocity);
-    wheelR.setAngularVelocity(rightWheelAngularVelocity);
+    float leftWheelAngularPosition;  // left wheel angular position (rad)
+    float rightWheelAngularPosition;  // right wheel angular position (rad)
+
+    calculateWheelAngularPositions(blackboard.movementRequest, leftWheelAngularPosition, rightWheelAngularPosition);
+    wheelL.setAngularPosition(leftWheelAngularPosition);
+    wheelR.setAngularPosition(rightWheelAngularPosition);
 
     // Tick the wheels
     wheelL.tick();
@@ -30,18 +32,23 @@ void Vehicle::tick()
 }
 
 /*
- * Calculate left and right wheel angular velocities from movement request
+ * Calculate left and right wheel angular positions from movement request
  * This is inverse kinematics
  * https://moodle.telt.unsw.edu.au/pluginfile.php/4264059/mod_resource/content/5/1_MTRN4110_Introduction_Locomotion_Perception.v20190604
  */
-void Vehicle::calculateWheelAngularVelocities(
-    MovementRequest &movementRequest, float &leftWheelAngularVelocity, float &rightWheelAngularVelocity)
+void Vehicle::calculateWheelAngularPositions(
+    MovementRequest &movementRequest, float &leftWheelAngularPosition, float &rightWheelAngularPosition)
 {
-    float leftWheelLinearVelocity = movementRequest.forwardVelocity - movementRequest.turnVelocity * DIST_BETWEEN_WHEELS_MM;
-    float rightWheelLinearVelocity = movementRequest.forwardVelocity + movementRequest.turnVelocity * DIST_BETWEEN_WHEELS_MM;
+    float leftWheelLinearPosition = movementRequest.forwardAmount - movementRequest.turnAmount * DIST_BETWEEN_WHEELS_MM / 2.0;
+    float rightWheelLinearPosition = movementRequest.forwardAmount + movementRequest.turnAmount * DIST_BETWEEN_WHEELS_MM / 2.0;
     
-    leftWheelAngularVelocity = leftWheelLinearVelocity / WHEEL_RADIUS_MM;
-    rightWheelAngularVelocity = rightWheelLinearVelocity / WHEEL_RADIUS_MM;
+    leftWheelAngularPosition = leftWheelLinearPosition / WHEEL_RADIUS_MM;
+    rightWheelAngularPosition = rightWheelLinearPosition / WHEEL_RADIUS_MM;
+
+    // Serial.print("angularpositions: ");
+    // Serial.print(RAD2DEG(leftWheelAngularPosition));
+    // Serial.print(", ");
+    // Serial.println(RAD2DEG(rightWheelAngularPosition));
 }
 
 static void leftEncoderInterrupt()
