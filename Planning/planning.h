@@ -17,8 +17,8 @@
 
 #define COLS    9
 #define ROWS    5
-#define GRRW        (ROWS*2)-1        // Grid row
-#define GRID_ROW(x) x*2
+#define GRRW        (ROWS*2)-1  // # of rows for walls
+#define GRID_ROW(x) x*2         // Row # for walls
 
 namespace Maze {
     typedef unsigned int edge;
@@ -28,12 +28,15 @@ namespace Maze {
             edge** walls;
             edge** paths;
             edge* shortestPath;
+            edge startRow;
+            edge startCol;
+            void addEdge(edge, edge, edge); // Add an edge to the graph
+            bool* isWall(edge, edge);
+            void floodFill(edge, edge); 
         
         public:
             Graph(char*);
-            void addEdge(edge, edge, edge); // Add an edge to the graph
-            bool* isWall(edge, edge);
-            edge* getShortestPath(); // Get the shortest path
+            edge* getShortestPath(edge, edge); // Get the shortest path from a specific starting point
             friend std::ostream& operator<<(std::ostream&, const Graph&);
     };
 }

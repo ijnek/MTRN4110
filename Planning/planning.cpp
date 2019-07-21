@@ -1,5 +1,4 @@
 #include "planning.h"
-
 using namespace Maze;
 
 /*
@@ -9,54 +8,36 @@ using namespace Maze;
  *     Horizontal walls will have (ROWS-1)*COLS spots
  *     Vertical walls will have ROWS*(COLS-1) spots
  */
-Graph::Graph(char *map){
-    // Split into horizontal and vertical components
+Graph::Graph(char *map) : startRow(0), startCol(0) {
+    // Allocate memory for walls
+    walls = new edge*[GRRW];
+    for(int i = 0; i < GRRW; i++) walls[i] = new edge[COLS];
+
+    // Initialise walls as unexplored
+    for(int i = 0; i < (ROWS*2)-1; i++)
+        for(int j = 0; j < COLS; j++)
+            addEdge(i, j, UNEXPL);
+
+    // Split map into horizontal and vertical components
     std::string map_str = static_cast<std::string>(map);
     fpos_t pos = map_str.find("V");
     std::string horizontal = map_str.substr(1, pos-1);
     std::string vertical = map_str.substr(pos+1);
 
-    // Allocate enough memory for ROWS and COLS
-    int adjustedRows = (ROWS*2)-1;
-    walls = new edge*[adjustedRows];
-    for(int i = 0; i < adjustedRows; i++){
-        walls[i] = new edge[COLS];
-    }
+    // Pad the vertical wall ends with UNEXPL
+    for(int i = 1; COLS*i < vertical.size(); i++) vertical.insert((COLS*i)-1, std::to_string(UNEXPL));
 
-    // Initialise the edges of the graph as unexplored
-    int i, j;
-    for(i = 0; i < (ROWS*2)-1; i++){
-        for(j = 0; j < COLS; j++){
-            addEdge(i, j, UNEXPL);
-        }
-    }
+    // Fill walls with the map's vertical and horizontal walls
+    for(int i = 0; i < vertical.size(); i++) addEdge((i/COLS)*2, i%COLS, vertical[i]-48);
+    for(int i = 0; i < horizontal.size(); i++) addEdge(((i/COLS)*2+1), i%COLS, horizontal[i]-48);
 
-    // Pad the column ends with 2
-    for(i = 1; COLS*i < vertical.size(); i++){
-        vertical.insert((COLS*i)-1, "2");
-    }
-
-    // Fill the graph with the vertical walls
-    for(i = 0; i < vertical.size(); i++){
-        addEdge((i/COLS)*2, i%COLS, vertical[i]-48);
-    }
-
-    // Fill the graph with the horizontal walls
-    for(i = 0; i < horizontal.size(); i++){
-        addEdge(((i/COLS)*2+1), i%COLS, horizontal[i]-48);
-    }
-
-    // Allocate space for paths
+    // Allocate memory for paths
     paths = new edge*[ROWS];
-    for(int i = 0; i < COLS; i++){
-        paths[i] = new edge[COLS];
-    }
+    for(int i = 0; i < COLS; i++) paths[i] = new edge[COLS];
 
-    // Initialise shortest path to the maximum possible path
+    // Allocate memory for Initialise shortest path to the maximum possible path
     shortestPath = new edge[ROWS*COLS];
-    for(i = 0; i < ROWS*COLS; i++){
-        shortestPath[i] = FWD;
-    }
+    for(int i = 0; i < ROWS*COLS; i++) shortestPath[i] = FWD;
 }
 
 /*
@@ -103,7 +84,6 @@ bool* Graph::isWall(edge row, edge col){
                 gridCol = col - 1;
                 break;
         }
-        std::cout<< gridRow << " " << gridCol << std::endl; 
         if(isInBounds(gridRow, gridCol)){ // Check if a wall exists and is within bounds
             if(gridRow == GRRW) gridRow--; // Edge case
             edge wallVal = walls[gridRow][gridCol];
@@ -112,58 +92,26 @@ bool* Graph::isWall(edge row, edge col){
             res[i] = false;
         }
     }
-
-    for(int i = 0; i < 4; i++) {
-        switch(i){
-            case 0:
-                std::cout << "North "; break;
-            case 1:
-                std::cout << "South "; break;
-            case 2:
-                std::cout << "East "; break;
-            case 3:
-                std::cout << "West "; break;
-        }
-            std::cout<<"res[i] = " << res[i] << "\n" << std::endl; 
-        }
-
     return res;
 }
 
-
-/* 
- * Find the shortest path from the start to the center of the maze
- * A path is the shortest when:
- *  - it is a valid path
- *  - it is the shortest path
- *  - it requires the least number of turns
- *  - the map has been sufficiently explored to find the shortest path
- * Implementationi: Flood-Fill algorithm
+/*
+ * Fills the path structure using the Flood Fill algorithm
  */
-
-edge* Graph::getShortestPath(){
+void Graph::floodFill(edge startRow, edge startCol){
     // Initialise each cell in paths to be the maximum value
+    this->startRow = startRow;
+    this->startCol = startCol;
     int N = ROWS*COLS - 1;
     for(int i = 0; i < ROWS; i++){
         for(int j = 0; j < COLS; j++){
             paths[i][j] = N;
-            if(i == ROWS/2 && j == COLS/2) paths[i][j] = 0;
+            if(i == startRow && j == startCol) paths[i][j] = 0;
         }
     }
     edge goal = 0;          // Value we want to reach
     edge currentVal = 0;    // value we currently have
     int mazeVal = 1;        // flag for checking if paths has updated
-
-
-    std::cout << "========== WALLS ==========" << std::endl;
-    for(int i = 0; i < (ROWS*2)-1; i++) {
-        std::cout << "    ";
-        for(int j = 0; j < COLS; j++) {
-            std::cout << walls[i][j] << " ";
-        }
-        std::cout<<std::endl;
-    }
-    std::cout << "===========================" << std::endl;
 
     while(mazeVal){
         mazeVal = 0;
@@ -171,29 +119,24 @@ edge* Graph::getShortestPath(){
             for(int j = 0; j < COLS; j++){
                 if(paths[i][j] == currentVal){ // if CurrentCellValue==CurrentExploredValue
                     // Check if a wall exists for each direction
-                    std::cout << "currently at: " << i << " " << j << std::endl;
                     bool *bounds = isWall(i, j); // check the boundaries (walls) for this cell
                     for(int k = 0; k < 4; k++){
                         edge currRow, currCol;
                         if(bounds[k]){
                             switch(k){
                                 case 0: // North Direction
-                                    std::cout<< "Going North" << std::endl; 
                                     currRow = i - 1;
                                     currCol = j;
                                     break;
                                 case 1: // South Direction
-                                    std::cout<< "Going South" << std::endl; 
                                     currRow = i + 1;
                                     currCol = j;
                                     break;
                                 case 2: // East Direction
-                                    std::cout<< "Going East" << std::endl; 
                                     currRow = i;
                                     currCol = j + 1;
                                     break;
                                 case 3: // West Direction
-                                    std::cout<< "Going West" << std::endl; 
                                     currRow = i;
                                     currCol = j - 1;
                                     break;
@@ -209,17 +152,45 @@ edge* Graph::getShortestPath(){
         }
         currentVal++;
     }
+}
 
-    std::cout << "========== PATHS ==========" << std::endl;
-    for(int i = 0; i < ROWS; i++) {
-        std::cout << "    ";
-        for(int j = 0; j < COLS; j++) {
-            if(paths[i][j] == 44) std::cout << "* ";
-            else std::cout << paths[i][j] << " ";
-        }
-        std::cout<<std::endl;
+/* 
+ * Find the shortest path from the start to the center of the maze
+ * A path is the shortest when:
+ *  - it is a valid path
+ *  - it is the shortest path
+ *  - it requires the least number of turns
+ *  - the map has been sufficiently explored to find the shortest path
+ * Implementationi: Flood-Fill algorithm
+ * Return: turns for the shortest path, NULL if no valid path exists
+ */
+edge* Graph::getShortestPath(edge startRow, edge startCol){
+    floodFill(startRow, startCol); // populate the paths structure
+    int N = ROWS*COLS - 1;
+    int pathVal = 1; // Flag for checking if shortestPath has been updated
+
+    // Iterate through paths to find the shortest path
+    edge currVal = paths[ROWS/2][COLS/2];
+    if(currVal == N){ // No valid paths exist
+        return nullptr;
     }
-    std::cout << "===========================" << std::endl;
+
+    while(pathVal) {
+        // for all neighbours
+            //if( == currVal - 1) // Search for currentVal-1 in paths
+            
+
+            // mark the common value with some identifier
+            // 
+        pathVal = 0;
+    }
+   
+                // if there's more than one value, 
+                    // mark the common value with some identifier
+                        // Shortest path exists for any path that gets to the start
+                        // follow that path and take note of the number of turns
+                    // stop when the starting value has been reached
+                // loop this until all paths have been searched
 
     return shortestPath;
 }
@@ -228,7 +199,7 @@ edge* Graph::getShortestPath(){
  * Helper function for the << operator
  */
 static std::string getSymbol(edge row, edge col, edge wall, edge path){
-    if(row == (ROWS/2 + 2) && col == COLS/2) return " X  ";
+    if(row == (ROWS/2 + 2) && col == COLS/2) return " X  "; // Center of the maze
 
     if(row%2){ // Horizontal walls
         switch(wall){
@@ -266,6 +237,13 @@ std::ostream& Maze::operator<<(std::ostream& output, const Graph& g){
         if(i%2 == 0) output << "| ";
         else output << "  ";
         for(int j=0; j < COLS; j++){
+            if(i == (ROWS/2 + 2) && j == COLS/2){ // Center of the maze
+                output << " X  ";
+                continue;
+            } if(i == g.startRow && j == g.startCol) {
+                output << " S  ";
+                continue;
+            }
             output << getSymbol(i, j, g.walls[i][j], g.paths[i/2][j]);
         }
         if(i%2 == 0) output << " |";
