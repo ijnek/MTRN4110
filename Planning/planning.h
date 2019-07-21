@@ -4,37 +4,37 @@
 #ifndef PLANNING_H
 #define PLANNING_H
 
-// Symbols for the map
-#define WALL    0
-#define NOWALL  1
+// For nodes
+#define NOWALL  0
+#define WALL    1
 #define UNEXPL  2
+
+// For shortestPath
+#define FWD     3
+#define BCK     4
+#define LFT     5
+#define RGT     6
 
 #define COLS    9
 #define ROWS    5
+#define GRRW        (ROWS*2)-1        // Grid row
+#define GRID_ROW(x) x*2
 
+namespace Maze {
+    typedef unsigned int edge;
 
-typedef unsigned int edge;
-
-class Graph {
-    private:
-        edge **nodes;
-    
-    public:
-        Graph();
-        void addEdge(edge row, edge col, edge val);
-        friend std::ostream& operator<<(std::ostream& output, const Graph& g);
-};
-
-class Maze {
-    private:
-        const char** map;  // Using an adjacency list to represent the map
-        int length; // Length of the map
-        // variable for storing the path?
-    public:
-        Maze(const char* map);
-        char* shortestPath(); // Get the shortest path?
-        friend std::ostream& operator<<(std::ostream& output, const Maze& maze);
-};
-char** createMap(char *map);
-
+    class Graph {
+        private:
+            edge** walls;
+            edge** paths;
+            edge* shortestPath;
+        
+        public:
+            Graph(char*);
+            void addEdge(edge, edge, edge); // Add an edge to the graph
+            bool* isWall(edge, edge);
+            edge* getShortestPath(); // Get the shortest path
+            friend std::ostream& operator<<(std::ostream&, const Graph&);
+    };
+}
 #endif
