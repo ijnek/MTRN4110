@@ -11,9 +11,13 @@ int main(){
      testVec.push_back((char*)"H101112222010012222010001222010010222V0000122201012222001102221011002200000122");
      testVec.push_back((char*)"H101112222010012222010001222010010222V0000122201002222001102221011002200000122");
 
-     Maze::Graph* graph = new Maze::Graph(testVec.at(4));
-     graph->getShortestPath(0, 0);
-     cout << *graph << endl;
+     for(auto t : testVec){
+          Graph* graph = new Graph(t);
+          graph->getShortestPath(0, 0);
+          cout << *graph << endl;
+     }
+
+     // Can check if the unexplored part can get a better layout if you treat them all as no wall
 
      return 0;
 }

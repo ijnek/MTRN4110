@@ -1,14 +1,14 @@
 #include "planning.h"
-using namespace Maze;
+#include <iostream>
+#include <array>
+#include <string>
 
 /*
  * Graph constructor
- * Creates a map from the input
- * Return an adjacency list
- *     Horizontal walls will have (ROWS-1)*COLS spots
- *     Vertical walls will have ROWS*(COLS-1) spots
+ * Params:
+ *      map - the maze layout and the starting location and heading of the robot
  */
-Graph::Graph(char *map) : startRow(0), startCol(0) {
+Graph::Graph(char *map) {
     // Allocate memory for walls
     walls = new edge*[GRRW];
     for(int i = 0; i < GRRW; i++) walls[i] = new edge[COLS];
@@ -36,8 +36,8 @@ Graph::Graph(char *map) : startRow(0), startCol(0) {
     for(int i = 0; i < COLS; i++) paths[i] = new edge[COLS];
 
     // Allocate memory for Initialise shortest path to the maximum possible path
-    shortestPath = new edge[ROWS*COLS];
-    for(int i = 0; i < ROWS*COLS; i++) shortestPath[i] = FWD;
+    shortestPath = new edge[2*ROWS*COLS];
+    for(int i = 0; i < 2*ROWS*COLS; i++) shortestPath[i] = FWD;
 }
 
 /*
@@ -161,36 +161,169 @@ void Graph::floodFill(edge startRow, edge startCol){
  *  - it is the shortest path
  *  - it requires the least number of turns
  *  - the map has been sufficiently explored to find the shortest path
- * Implementationi: Flood-Fill algorithm
+ * Basically counts the number of turns for each possible path
  * Return: turns for the shortest path, NULL if no valid path exists
  */
 edge* Graph::getShortestPath(edge startRow, edge startCol){
     floodFill(startRow, startCol); // populate the paths structure
     int N = ROWS*COLS - 1;
-    int pathVal = 1; // Flag for checking if shortestPath has been updated
+    edge currVal = paths[ROWS/2][COLS/2]; // Value at the center of the map (the goal)
+    if(currVal == N) return nullptr; // No path can reach the center
 
-    // Iterate through paths to find the shortest path
-    edge currVal = paths[ROWS/2][COLS/2];
-    if(currVal == N){ // No valid paths exist
-        return nullptr;
-    }
-
-    while(pathVal) {
-        // for all neighbours
-            //if( == currVal - 1) // Search for currentVal-1 in paths
+    edge minPath[ROWS][COLS]; // Minimum turn path
+    edge curPath[ROWS][COLS]; // Current path
+    for(int i = 0; i < ROWS; i++)
+        for(int j = 0; j < COLS; j++){
+            curPath[i][j] = N;
+            minPath[i][j] = N;
+        }
             
+    
+    int pathsFlag = 1; // Flag to say all paths have been searched
+    int minTurns = N*N; // Minimum amount of turns for the minimum path
+    int curTurns = 0; // Current turn count
+    int shortCount = 0;
+    edge prevCell[2] = {ROWS/2, COLS/2}; // previous cell
+    edge curCell[2] = {ROWS/2, COLS/2}; // current cell
+    edge visited[ROWS*COLS] = {0};
 
-            // mark the common value with some identifier
-            // 
-        pathVal = 0;
+    while(pathsFlag){
+        for(int i = 0; i < ROWS; i++)
+            for(int j = 0; j < COLS; j++)
+                curPath[i][j] = N;
+        curTurns = 0;
+        currVal = paths[ROWS/2][COLS/2];
+        curCell[0] = ROWS/2; // Reset the current cell to the center of the map
+        curCell[1] = COLS/2;
+        int valid = 0;
+        while(currVal){ // search a path
+            int count = 0;
+            std::array<edge, 2> neigCell = {0, 0};
+            bool *bounds = isWall(curCell[0], curCell[1]); // check the boundaries (walls) for this cell
+            // Find the location of the next cell
+            for(int k = 0; k < 4; k++){
+                edge nextRow, nextCol; // next row and column
+                if(bounds[k]){
+                    switch(k){
+                        case 0: // North Direction
+                            nextRow = curCell[0] - 1;
+                            nextCol = curCell[1];
+                            break;
+                        case 1: // South Direction
+                            nextRow = curCell[0] + 1;
+                            nextCol = curCell[1];
+                            break;
+                        case 2: // East Direction
+                            nextRow = curCell[0];
+                            nextCol = curCell[1] + 1;
+                            break;
+                        case 3: // West Direction
+                            nextRow = curCell[0];
+                            nextCol = curCell[1] - 1;
+                            break;
+                    }
+                    if(paths[nextRow][nextCol] == currVal-1){ // Potential next cell found, add it to array
+                        // store the location of the neighbour
+                        neigCell[0] = nextRow;
+                        neigCell[1] = nextCol;
+                        count++;
+                        int i;
+                        for(i = 0; visited[i] != 0; i++);
+                        visited[i] = currVal;
+                    }
+                }
+            }
+            if(count == 0) break; // No suitable neighbour cell was found --> no path exists
+
+            // Update the cell values
+            prevCell[0] = curCell[0];
+            prevCell[1] = curCell[1];
+            curCell[0] = neigCell[0];
+            curCell[1] = neigCell[1];
+
+            // Add to currPath and shortestPath
+            curPath[neigCell[0]][neigCell[1]] = paths[neigCell[0]][neigCell[1]];
+            shortestPath[shortCount] = neigCell[0];
+            shortestPath[shortCount+1] = neigCell[0];
+            shortCount += 2;
+
+            if(count > 1) paths[neigCell[0]][neigCell[1]] += N; // 'Mark' the cell
+            if(count == 1){
+                for(int i = 0; i < ROWS; i++){
+                    if(visited[i] == paths[neigCell[0]][neigCell[1]]){
+                        paths[neigCell[0]][neigCell[1]] += N;
+                        break;
+                    }
+                }
+            }
+            currVal--;
+            pathsFlag = 1;
+        }
+
+        // calculate the number of turns in this path if the path is valid
+        if(pathsFlag) {
+            for(int i = 2*2; shortestPath[i] != FWD; i += 2){
+                // Get every second cell
+                edge pRow = shortestPath[i-4];
+                edge pCol = shortestPath[i-3];
+                edge cRow = shortestPath[i];
+                edge cCol = shortestPath[i+1];
+
+                edge difRow = cRow - pRow;
+                edge difCol = cCol - pCol;
+                if(difRow == 0 && difCol == 0) curTurns++;
+            }
+        }
+        if(curTurns == 0) break;
+        shortestPath = new edge[2*ROWS*COLS];
+        for(int i = 0; i < 2*ROWS*COLS; i++) shortestPath[i] = FWD;
+
+        std::cout << "========== CURRENT PATH ==========" << std::endl;
+        for(int i = 0; i < ROWS; i++) {
+            std::cout << "    ";
+            for(int j = 0; j < COLS; j++) {
+                if(curPath[i][j] == 44) std::cout << "* ";
+                else std::cout << curPath[i][j] << " ";
+            }
+            std::cout<<std::endl;
+        }
+        std::cout << "Number of turns: " << curTurns << std::endl;
+        std::cout << "==================================" << std::endl;
+
+        if(curTurns < minTurns && curTurns != 0) { // Update the minimum turn path if necessary
+            minTurns = curTurns;
+            for(int i = 0; i < ROWS; i++)
+                for(int j = 0; j < COLS; j++)
+                    minPath[i][j] = curPath[i][j];
+        }
     }
-   
-                // if there's more than one value, 
-                    // mark the common value with some identifier
-                        // Shortest path exists for any path that gets to the start
-                        // follow that path and take note of the number of turns
-                    // stop when the starting value has been reached
-                // loop this until all paths have been searched
+    
+    for(int i = 0; i < ROWS; i++)
+        for(int j = 0; j < COLS; j++)
+            paths[i][j] = minPath[i][j];
+
+    // while flag
+        // flag = 0
+        // while currVal is 0
+            // current node = center of the map
+            // for all adjacent neighbours
+                // if neighbour's value is == currVal - 1
+                    // store neighbour location in X
+            // if len(X) == 0
+                // break
+            // if len(X) > 1
+                // X[0] value += 50
+            // prev node = current node
+            // current node == X[0] location
+            // add current node to current path
+            // flag = 1
+            // clear X
+            // did turn(current node, prev node) ? current turns ++
+        // if current turns < minturns
+            // min turns = current turns
+            // update min path
+
+    // paths = min path
 
     return shortestPath;
 }
@@ -199,8 +332,6 @@ edge* Graph::getShortestPath(edge startRow, edge startCol){
  * Helper function for the << operator
  */
 static std::string getSymbol(edge row, edge col, edge wall, edge path){
-    if(row == (ROWS/2 + 2) && col == COLS/2) return " X  "; // Center of the maze
-
     if(row%2){ // Horizontal walls
         switch(wall){
             case WALL:
@@ -214,7 +345,18 @@ static std::string getSymbol(edge row, edge col, edge wall, edge path){
         }
     } else { // Vertical walls
         if(col == COLS-1) return "   ";
-        if(path == ROWS*COLS - 1) return "   *";
+        if(path == ROWS*COLS - 1){
+            switch(wall){
+                case WALL:
+                    return "   |";
+                case NOWALL:
+                    return "    ";
+                case UNEXPL:
+                    return "   *";
+                default:
+                    return "   *";
+            }
+        }
         switch(wall){
             case WALL:
                 return (path/10) ? std::to_string(path) + " |" : " " + std::to_string(path) + " |";
@@ -231,14 +373,14 @@ static std::string getSymbol(edge row, edge col, edge wall, edge path){
 /*
  * Output the graph in the proper format
  */
-std::ostream& Maze::operator<<(std::ostream& output, const Graph& g){
+std::ostream& operator<<(std::ostream& output, const Graph& g){
     output << "  --- --- --- --- --- --- --- --- --- " << std::endl;
     for(int i = 0; i < GRRW; i++){
         if(i%2 == 0) output << "| ";
         else output << "  ";
         for(int j=0; j < COLS; j++){
             if(i == (ROWS/2 + 2) && j == COLS/2){ // Center of the maze
-                output << " X  ";
+                output << " X  "; //TODO - include the wall in this
                 continue;
             } if(i == g.startRow && j == g.startCol) {
                 output << " S  ";

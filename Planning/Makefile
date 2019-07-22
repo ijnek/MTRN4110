@@ -1,5 +1,5 @@
 NAME := test
-GCC	:= -Wall -Werror
+GCC	:= -Wall -Werror -std=c++0x
 
 # Requires main.cpp and pid.o
 # Final executable is 'test'
