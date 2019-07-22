@@ -1,11 +1,9 @@
+#include <Arduino.h>
 #include "planning.h"
-#include <iostream>
-#include <array>
-#include <string>
 
 /*
  * Graph constructor
- * Params:
+ * params:
  *      map - the maze layout and the starting location and heading of the robot
  */
 Graph::Graph(char *map) {
@@ -19,25 +17,22 @@ Graph::Graph(char *map) {
             addEdge(i, j, UNEXPL);
 
     // Split map into horizontal and vertical components
-    std::string map_str = static_cast<std::string>(map);
-    fpos_t pos = map_str.find("V");
-    std::string horizontal = map_str.substr(1, pos-1);
-    std::string vertical = map_str.substr(pos+1);
+    String map_str = String(map);
+    int pos = map_str.indexOf("V");
+    String horizontal = map_str.substring(1, pos-1);
+    String vertical = map_str.substring(pos+1);
 
     // Pad the vertical wall ends with UNEXPL
-    for(int i = 1; COLS*i < vertical.size(); i++) vertical.insert((COLS*i)-1, std::to_string(UNEXPL));
+    for(int i = 1; COLS*i < vertical.length(); i++) 
+      vertical = vertical.substring(0, (COLS*i)-1) + String(UNEXPL) + vertical.substring((COLS*i), vertical.length());
 
     // Fill walls with the map's vertical and horizontal walls
-    for(int i = 0; i < vertical.size(); i++) addEdge((i/COLS)*2, i%COLS, vertical[i]-48);
-    for(int i = 0; i < horizontal.size(); i++) addEdge(((i/COLS)*2+1), i%COLS, horizontal[i]-48);
+    for(int i = 0; i < vertical.length(); i++) addEdge((i/COLS)*2, i%COLS, vertical[i]-48);
+    for(int i = 0; i < horizontal.length(); i++) addEdge(((i/COLS)*2+1), i%COLS, horizontal[i]-48);
 
     // Allocate memory for paths
     paths = new edge*[ROWS];
     for(int i = 0; i < COLS; i++) paths[i] = new edge[COLS];
-
-    // Allocate memory for Initialise shortest path to the maximum possible path
-    shortestPath = new edge[2*ROWS*COLS];
-    for(int i = 0; i < 2*ROWS*COLS; i++) shortestPath[i] = FWD;
 }
 
 /*
@@ -164,7 +159,7 @@ void Graph::floodFill(edge startRow, edge startCol){
  * Basically counts the number of turns for each possible path
  * Return: turns for the shortest path, NULL if no valid path exists
  */
-edge* Graph::getShortestPath(edge startRow, edge startCol){
+void Graph::calcShortestPath(edge startRow, edge startCol){
     floodFill(startRow, startCol); // populate the paths structure
     int N = ROWS*COLS - 1;
     edge currVal = paths[ROWS/2][COLS/2]; // Value at the center of the map (the goal)
@@ -177,7 +172,9 @@ edge* Graph::getShortestPath(edge startRow, edge startCol){
             curPath[i][j] = N;
             minPath[i][j] = N;
         }
-            
+
+    edge* shortestPath = new edge[2*ROWS*COLS];
+    for(int i = 0; i < 2*ROWS*COLS; i++) shortestPath[i] = N;
     
     int pathsFlag = 1; // Flag to say all paths have been searched
     int minTurns = N*N; // Minimum amount of turns for the minimum path
@@ -198,7 +195,7 @@ edge* Graph::getShortestPath(edge startRow, edge startCol){
         int valid = 0;
         while(currVal){ // search a path
             int count = 0;
-            std::array<edge, 2> neigCell = {0, 0};
+            edge neigCell[2] = {0};
             bool *bounds = isWall(curCell[0], curCell[1]); // check the boundaries (walls) for this cell
             // Find the location of the next cell
             for(int k = 0; k < 4; k++){
@@ -262,7 +259,7 @@ edge* Graph::getShortestPath(edge startRow, edge startCol){
 
         // calculate the number of turns in this path if the path is valid
         if(pathsFlag) {
-            for(int i = 2*2; shortestPath[i] != FWD; i += 2){
+            for(int i = 2*2; shortestPath[i] != N; i += 2){
                 // Get every second cell
                 edge pRow = shortestPath[i-4];
                 edge pCol = shortestPath[i-3];
@@ -275,20 +272,20 @@ edge* Graph::getShortestPath(edge startRow, edge startCol){
             }
         }
         if(curTurns == 0) break;
-        shortestPath = new edge[2*ROWS*COLS];
-        for(int i = 0; i < 2*ROWS*COLS; i++) shortestPath[i] = FWD;
+        for(int i = 0; i < 2*ROWS*COLS; i++) shortestPath[i] = N;
 
-        std::cout << "========== CURRENT PATH ==========" << std::endl;
+        Serial.print("========== CURRENT PATH ==========\n");
         for(int i = 0; i < ROWS; i++) {
-            std::cout << "    ";
+            Serial.print("    ");
             for(int j = 0; j < COLS; j++) {
-                if(curPath[i][j] == 44) std::cout << "* ";
-                else std::cout << curPath[i][j] << " ";
+                if(curPath[i][j] == 44) Serial.print("* ");
+                else Serial.print(curPath[i][j]);
             }
-            std::cout<<std::endl;
+            Serial.print("\n");
         }
-        std::cout << "Number of turns: " << curTurns << std::endl;
-        std::cout << "==================================" << std::endl;
+        Serial.print("Number of turns: ");
+        Serial.println(curTurns);
+        Serial.print("==================================\n");
 
         if(curTurns < minTurns && curTurns != 0) { // Update the minimum turn path if necessary
             minTurns = curTurns;
@@ -301,37 +298,12 @@ edge* Graph::getShortestPath(edge startRow, edge startCol){
     for(int i = 0; i < ROWS; i++)
         for(int j = 0; j < COLS; j++)
             paths[i][j] = minPath[i][j];
-
-    // while flag
-        // flag = 0
-        // while currVal is 0
-            // current node = center of the map
-            // for all adjacent neighbours
-                // if neighbour's value is == currVal - 1
-                    // store neighbour location in X
-            // if len(X) == 0
-                // break
-            // if len(X) > 1
-                // X[0] value += 50
-            // prev node = current node
-            // current node == X[0] location
-            // add current node to current path
-            // flag = 1
-            // clear X
-            // did turn(current node, prev node) ? current turns ++
-        // if current turns < minturns
-            // min turns = current turns
-            // update min path
-
-    // paths = min path
-
-    return shortestPath;
 }
 
 /*
  * Helper function for the << operator
  */
-static std::string getSymbol(edge row, edge col, edge wall, edge path){
+static String getSymbol(edge row, edge col, edge wall, edge path){
     if(row%2){ // Horizontal walls
         switch(wall){
             case WALL:
@@ -359,11 +331,11 @@ static std::string getSymbol(edge row, edge col, edge wall, edge path){
         }
         switch(wall){
             case WALL:
-                return (path/10) ? std::to_string(path) + " |" : " " + std::to_string(path) + " |";
+                return (path/10) ? String(path) + " |" : " " + String(path) + " |";
             case NOWALL:
-                return (path/10) ? std::to_string(path) + "  " : " " + std::to_string(path) + "  ";
+                return (path/10) ? String(path) + "  " : " " + String(path) + "  ";
             case UNEXPL:
-                return (path/10) ? std::to_string(path) + " *" : " " + std::to_string(path) + " *";
+                return (path/10) ? String(path) + " *" : " " + String(path) + " *";
             default:
                 return "   *";
         }
@@ -373,24 +345,23 @@ static std::string getSymbol(edge row, edge col, edge wall, edge path){
 /*
  * Output the graph in the proper format
  */
-std::ostream& operator<<(std::ostream& output, const Graph& g){
-    output << "  --- --- --- --- --- --- --- --- --- " << std::endl;
+void Graph::printGraph(){
+    Serial.print("  --- --- --- --- --- --- --- --- ---\n");
     for(int i = 0; i < GRRW; i++){
-        if(i%2 == 0) output << "| ";
-        else output << "  ";
+        if(i%2 == 0) Serial.print("| ");
+        else Serial.print("  ");
         for(int j=0; j < COLS; j++){
             if(i == (ROWS/2 + 2) && j == COLS/2){ // Center of the maze
-                output << " X  "; //TODO - include the wall in this
+                Serial.print(" X  "); //TODO - include the wall in this
                 continue;
-            } if(i == g.startRow && j == g.startCol) {
-                output << " S  ";
+            } if(i == startRow && j == startCol) {
+                Serial.print(" S  ");
                 continue;
             }
-            output << getSymbol(i, j, g.walls[i][j], g.paths[i/2][j]);
+            Serial.print(getSymbol(i, j, walls[i][j], paths[i/2][j]));
         }
-        if(i%2 == 0) output << " |";
-        output << std::endl;
+        if(i%2 == 0) Serial.print(" |");
+        Serial.print("\n");
     }
-    output << "  --- --- --- --- --- --- --- --- --- ";
-    return output;
+    Serial.print("  --- --- --- --- --- --- --- --- --- ");
 }

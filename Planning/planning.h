@@ -1,6 +1,3 @@
-#include <iostream>
-#include <string>
-
 #ifndef PLANNING_H
 #define PLANNING_H
 
@@ -8,8 +5,6 @@
 #define NOWALL  0
 #define WALL    1
 #define UNEXPL  2
-
-#define FWD 1
 
 #define COLS    9
 #define ROWS    5
@@ -22,7 +17,6 @@ class Graph {
     private:
         edge** walls; // Array of walls in the map (excluding the outer walls)
         edge** paths; // Shortest path possible based on the given map
-        edge* shortestPath;
         edge startRow; // Original position (row)
         edge startCol; // Original position (column)
         void addEdge(edge, edge, edge); // Add an edge to the graph
@@ -31,8 +25,8 @@ class Graph {
     
     public:
         Graph(char*);
-        edge* getShortestPath(edge, edge); // Get the shortest path from a specific starting point
-        friend std::ostream& operator<<(std::ostream&, const Graph&);
+        void calcShortestPath(edge, edge); // Get the shortest path from a specific starting point
+        void printGraph();        
 };
 
 #endif
