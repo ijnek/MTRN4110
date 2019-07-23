@@ -10,6 +10,11 @@
 #define GRRW        (ROWS*2)-1  // # of rows for walls
 #define GRID_ROW(x) x*2         // Row # for walls
 
+#define STRT  0   // Go straight
+#define LEFT  1   // Go left
+#define RGHT  2   // Go right
+#define NONE  3   // No direction
+
 typedef unsigned int edge;
 
 class Graph {
@@ -18,6 +23,7 @@ class Graph {
         edge** paths;   // Shortest path possible based on the given map
         edge startRow;  // Original position (row)
         edge startCol;  // Original position (column)
+        edge* pathDir;  // Directions for the minimum turn path
         void initWalls(char*);        // Initialise wall
         void initStart(char*);        // Initialise startRow and startCol
         edge* getAdjVal(edge, edge);  // Get the values of adjacent cells
@@ -30,6 +36,7 @@ class Graph {
         Graph(const Graph&);      // Copy constructor
         bool calcShortestPath();  // Get the shortest path from a specific starting point
         void printGraph();        // Print the graph walls and path
+        void printDirections();   // Print the directions for the minimum turn path
         friend bool isExplored(Graph* g); // Has the graph been sufficiently explored?
 };
 

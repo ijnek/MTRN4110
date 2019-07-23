@@ -17,6 +17,15 @@ Graph::Graph(char *map) {
   // Allocate memory for paths
   paths = new edge*[ROWS];
   for(int i = 0; i < COLS; i++) paths[i] = new edge[COLS];
+
+  // Initialise paths
+  for(int i = 0; i < ROWS; i++)
+    for(int j = 0; j < COLS; j++)
+      paths[i][j] = ROWS*COLS - 1;
+
+  // Allocate and initialise memory for pathDir
+  pathDir = new edge[ROWS*COLS];
+  for(int i = 0; i < ROWS*COLS; i++) pathDir[i] = NONE;
   
   initWalls(map);
   initStart(map);
@@ -63,6 +72,13 @@ Graph::Graph(const Graph& oldGraph){
   for(int i = 0; i < ROWS; i++)
     for(int j = 0; j < COLS; j++)
       paths[i][j] = oldGraph.paths[i][j];
+
+  // Allocate memory and copy pathDir
+  pathDir = new edge[ROWS*COLS];
+  for(int i = 0; i < ROWS*COLS; i++)
+    pathDir[i] = oldGraph.pathDir[i];
+  
+
 }
 
 /*
@@ -85,7 +101,7 @@ void Graph::initWalls(char* map){
   String map_str = String(map);
   int posH = map_str.indexOf("H"); // position of 'H'
   int posV = map_str.indexOf("V"); // position of 'V'
-  String horizontal = map_str.substring(posH+1, posV-1);
+  String horizontal = map_str.substring(posH+1, posV);
   String vertical = map_str.substring(posV+1);
   
   // Pad the vertical wall ends with UNEXPL
@@ -231,7 +247,7 @@ void Graph::floodFill(){
   for(int i = 0; i < ROWS; i++){
     for(int j = 0; j < COLS; j++){
       paths[i][j] = N;
-      if(i == startRow && j == startCol) paths[i][j] = 0; // Goal
+      if(i == startRow && j == startCol) paths[i][j] = 0; // Starting cell
     }
   }  
   edge goal = 0;        // Value we want to reach
@@ -259,139 +275,128 @@ void Graph::floodFill(){
   }
 }
 
-/* 
+
+ /*
  * Find the shortest path from the start to the center of the maze
- * A path is the shortest when:
- *  - it is a valid path
- *  - it is the shortest path
- *  - it requires the least number of turns
- *  - the map has been sufficiently explored to find the shortest path
- * Basically counts the number of turns for each possible path
- * Return: true if a valid path exists
+ * The shortest path requires the least number of turns
+ * params: none
+ * assumptions: none
+ * return: true if a valid path exists
  */
 bool Graph::calcShortestPath(){
   floodFill(); // populate the paths structure
     
   int N = ROWS*COLS - 1;
-  edge currVal = paths[ROWS/2][COLS/2]; // Value at the center of the map (the goal)
-  if(currVal == N) return false; // No valid path exists
+  edge goalVal = paths[ROWS/2][COLS/2];
+  if(goalVal == N) return false; // No valid path exists
 
-  edge minPath[ROWS][COLS]; // Minimum turn path
-  edge curPath[ROWS][COLS]; // Current path
-  for(int i = 0; i < ROWS; i++){ // Initialise curPath and minPath
-    for(int j = 0; j < COLS; j++){
-      curPath[i][j] = N;
+  // Initialise the minimum turn path array
+  edge minPath[ROWS][COLS];
+  for(int i = 0; i < ROWS; i++)
+    for(int j = 0; j < COLS; j++)
       minPath[i][j] = N;
-    }
-  }
-  edge* curPathPos = new edge[2*ROWS*COLS]; // Positions of the current path's cells
-  for(int i = 0; i < 2*ROWS*COLS; i++) curPathPos[i] = N;
-  int pathsFlag = 1; // Flag to say all paths have been searched
-  int minTurns = N*N; // Minimum amount of turns for the minimum path
-  int curTurns = 0; // Current turn count
-  int shortCount = 0;
-  edge prevCell[2] = {ROWS/2, COLS/2}; // previous cell
-  edge curCell[2] = {ROWS/2, COLS/2}; // current cell
-  edge visited[ROWS*COLS] = {0};
+   
+  // Array for the cell positions in minPath
+  edge minPathPos[goalVal][2];
+  for(int i = 0; i < goalVal; i++)
+    for(int j = 0; j < COLS; j++)
+      minPathPos[i][j] = N;
+  minPathPos[0][0] = ROWS/2; minPathPos[0][1] = COLS/2;
+  int minPathPosCount = 1; // index for minPathPos
 
-    while(pathsFlag){
-        for(int i = 0; i < ROWS; i++)
-            for(int j = 0; j < COLS; j++)
-                curPath[i][j] = N;
-        curTurns = 0;
-        currVal = paths[ROWS/2][COLS/2];
-        curCell[0] = ROWS/2; // Reset the current cell to the center of the map
-        curCell[1] = COLS/2;
-        int valid = 0;
-        while(currVal){ // search a path
-            int count = 0;
-            edge neigCell[2] = {0};
-            edge* neighbours = getAdjVal(curCell[0], curCell[1]); // get the adjcent values for this cell
-            // Find the location of the next cell
-            for(int k = 0; k < 4; k++){
-              if(neighbours[k] == currVal-1){ // Potential next cell found, add it to array
-                  // store the location of the neighbour
-                  edge* next = getCellPos(k, curCell[0], curCell[1]);
-                  
-                  neigCell[0] = next[0];
-                  neigCell[1] = next[1];
-                  count++;
-                  int i;
-                  for(i = 0; visited[i] != 0; i++);
-                  visited[i] = currVal;
-                }
-            }
-            if(count == 0) break; // No suitable neighbour cell was found --> no path exists
+  // Locations of next possible cells (4 possible availible cells * (row, column))
+  edge nextCells[4][2];
+  for(int i = 0; i < 4; i++)
+    for(int j = 0; j < 2; j++)
+      nextCells[i][j] = 10;
+  int nextCellCount = 0;      // index for nextCells
+  bool nextCellFlag = false;  // flag to say if the next cell has been found
 
-            // Update the cell values
-            prevCell[0] = curCell[0];
-            prevCell[1] = curCell[1];
-            curCell[0] = neigCell[0];
-            curCell[1] = neigCell[1];
-
-            // Add to currPath and shortestPath
-            curPath[neigCell[0]][neigCell[1]] = paths[neigCell[0]][neigCell[1]];
-            curPathPos[shortCount] = neigCell[0];
-            curPathPos[shortCount+1] = neigCell[0];
-            shortCount += 2;
-
-            if(count > 1) paths[neigCell[0]][neigCell[1]] += N; // 'Mark' the cell
-            if(count == 1){
-                for(int i = 0; i < ROWS; i++){
-                    if(visited[i] == paths[neigCell[0]][neigCell[1]]){
-                        paths[neigCell[0]][neigCell[1]] += N;
-                        break;
-                    }
-                }
-            }
-            currVal--;
-            pathsFlag = 1;
-        }
-
-        // calculate the number of turns in this path if the path is valid
-        if(pathsFlag) {
-            for(int i = 2*2; curPathPos[i] != N; i += 2){
-                // Get every second cell
-                edge pRow = curPathPos[i-4];
-                edge pCol = curPathPos[i-3];
-                edge cRow = curPathPos[i];
-                edge cCol = curPathPos[i+1];
-
-                edge difRow = cRow - pRow;
-                edge difCol = cCol - pCol;
-                if(difRow == 0 && difCol == 0) curTurns++;
-            }
-        }
-        if(curTurns == 0) break;
-        for(int i = 0; i < 2*ROWS*COLS; i++) curPathPos[i] = N;
-
-        Serial.print("========== CURRENT PATH ==========\n");
-        for(int i = 0; i < ROWS; i++) {
-            Serial.print("    ");
-            for(int j = 0; j < COLS; j++) {
-                if(curPath[i][j] == 44) Serial.print("*");
-                else Serial.print(curPath[i][j]);
-                Serial.print(" ");
-            }
-            Serial.print("\n");
-        }
-        Serial.print("Number of turns: ");
-        Serial.println(curTurns);
-        Serial.print("==================================\n");
-
-        if(curTurns < minTurns && curTurns != 0) { // Update the minimum turn path if necessary
-            minTurns = curTurns;
-            for(int i = 0; i < ROWS; i++)
-                for(int j = 0; j < COLS; j++)
-                    minPath[i][j] = curPath[i][j];
-        }
+  edge curVal = goalVal;                // current cell value to look for
+  edge curCell[2] = { ROWS/2, COLS/2}; // current cell location
+  int prev2cur[2] = {0}; // difference between the previous and current cell position
+  int cur2next[2] = {0}; // difference between the current and next cell position
+ 
+  // Loop until the current cell value is 1
+  while(curVal > 1){
+    edge* neighbours = getAdjVal(curCell[0], curCell[1]); // get the adjacent cell values
+    
+    // Find the potential next cells to go to (and fill into nextCells)
+    for(int i = 0; i < 4; i++){
+      if(neighbours[i] == curVal - 1){
+        edge* next = getCellPos(i, curCell[0], curCell[1]);
+        nextCells[nextCellCount][0] = next[0];
+        nextCells[nextCellCount][1] = next[1];
+        nextCellCount++;
+      }
     }
     
-    for(int i = 0; i < ROWS; i++)
-        for(int j = 0; j < COLS; j++)
-            paths[i][j] = minPath[i][j];
+    // Find if we can go straight for any of the nextCells
+    for(int i = 0; i < nextCellCount; i++){
+      cur2next[0] = nextCells[i][0] - curCell[0];
+      cur2next[1] = nextCells[i][1] - curCell[1];
+      
+      // Next cell is either straight ahead or the one closest to the goal
+      if((prev2cur[0] == cur2next[0] && prev2cur[1] == cur2next[1]) || (curVal == goalVal)){
+        nextCellFlag = true;
+        for(int j = 0; j < 2; j++){ // Update all values
+          prev2cur[j] = cur2next[j];
+          curCell[j] = nextCells[i][j];
+          minPathPos[minPathPosCount][j] = nextCells[i][j];
+        }
+        minPath[nextCells[i][0]][nextCells[i][1]] = curVal-1;
+        minPathPosCount++;
+        break;
+      }
+    }
+    // Could not drive forward, need to turn
+    if(!nextCellFlag){
+      for(int i = 0; i < 2; i++){ // Update all values
+        prev2cur[i] = nextCells[0][i] - curCell[i];
+        curCell[i] = nextCells[0][i];
+        minPathPos[minPathPosCount][i] = nextCells[0][i];
+      }
+      minPath[nextCells[0][0]][nextCells[0][1]] = curVal-1;
+      minPathPosCount++;
+    }
 
-    return true;
+    // Reset everything
+    for(int i = 0; i < 4; i++)
+      for(int j = 0; j < 2; j++)
+        nextCells[i][j] = 0;
+    nextCellCount = 0;
+    nextCellFlag = false;
+    curVal--;    
+  }
+
+  // Copy the minPath into paths
+  for(int i = 0; i < ROWS; i++)
+    for(int j = 0; j < COLS; j++)
+      paths[i][j] = minPath[i][j];
+
+  // Calculate the directions for pathDir
+  minPathPos[minPathPosCount][0] = startRow; minPathPos[minPathPosCount][1] = startCol;
+  pathDir[0] = STRT;
+  for(int i = minPathPosCount-1; i > 0; i--){
+    for(int j = 0; j < 2; j++){ // Update values
+      prev2cur[j] = minPathPos[i+1][j] - minPathPos[i][j];
+      cur2next[j] = minPathPos[i][j] - minPathPos[i-1][j]; 
+    }
+    if(prev2cur[1] - cur2next[1] == 0){ // going straight
+      pathDir[minPathPosCount-i] = STRT;
+    } else if(prev2cur[1] - cur2next[1] > 0) {
+      pathDir[minPathPosCount-i] = LEFT;
+    } else if(prev2cur[1] - cur2next[1] < 0){
+      pathDir[minPathPosCount-i] = RGHT;
+    }
+  }
+  for(int i = 1; i < minPathPosCount-1; i++){
+    edge temp = pathDir[i+1];
+    pathDir[i] = temp;
+  }
+  pathDir[minPathPosCount-1] = NONE;
+  
+  return true;
 }
 
 
@@ -442,8 +447,13 @@ String Graph::getSymbol(edge row, edge col){
        return "*** ";
     }
   } else { // Vertical walls
-    if(col == COLS-1) return "   ";
-    if(path == ROWS*COLS - 1){ // No path value
+    if(col == COLS-1){
+      if(path >= ROWS*COLS - 1 || path <= 0){
+        return "   ";
+      }
+      return (path/10) ? String(path) + " " : " " + String(path) + " ";
+    }
+    if(path >= ROWS*COLS - 1 || path <= 0){ // No path value
       switch(wall){
         case WALL:
           return "   |";
@@ -488,6 +498,37 @@ void Graph::printGraph(){
   Serial.println("  --- --- --- --- --- --- --- --- --- ");
 }
 
+/*
+ * Print the directions for the minimum turn path
+ * params: none
+ * assumptions: none
+ * return: none
+ */
+void Graph::printDirections(){
+  if(pathDir[0] == NONE){ // No directions exist
+    Serial.println("\t--> No shortest path exists");
+    return;
+  }
+  Serial.println("\t--> Directions to get to the goal");
+  for(int i = 0; pathDir[i] != NONE; i++){
+    Serial.print("\t");
+    Serial.print(i+1);
+    Serial.print(") ");
+    switch(pathDir[i]){
+      case STRT:
+        Serial.println("Forward");
+        break;
+      case LEFT:
+        Serial.println("Left");
+        break;
+      case RGHT:
+        Serial.println("Right");
+        break;
+    }
+  }
+}
+
+
 bool isExplored(Graph* g){
   Graph exploredGraph = *g; // create a copy of the graph
   for(int i = 0; i < GRRW; i++){
@@ -504,7 +545,7 @@ bool isExplored(Graph* g){
     for(int j = 0; j < COLS; j++){
       if(exploredGraph.paths[i][j] - g->paths[i][j] != 0){
         // some discrepancies in shortest path exist, graph is not sufficiently explored
-        Serial.println("Graph is not sufficiently explored, a shorter path exists: ");
+        Serial.println("\t--> Graph is not sufficiently explored, a shorter path exists: ");
         exploredGraph.printGraph();
         return false;
       }
