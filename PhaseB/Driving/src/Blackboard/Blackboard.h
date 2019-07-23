@@ -19,7 +19,6 @@ class Blackboard
     int plan;  // plan enum
     int command; // command going to motion
     bool resetLocalisation;
-    bool newCommand; // whether there is a new command, to notify planning
     bool commandCompleted; // whether the command has been completed, by motion
 };
 
