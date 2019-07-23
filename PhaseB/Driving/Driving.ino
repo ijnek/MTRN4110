@@ -21,15 +21,15 @@ void setup() {
 
 void loop() {
     // sensing.tick();  // commented out becqause it works better without a gyroscope currently
-    // communication.tick();
+    communication.tick();
     planning.tick();
     vehicle.tick();
     localisation.tick();
 
     // Serial.print("pose: ");
-    Serial.print(blackboard.worldPose.x);
-    Serial.print(", ");
-    Serial.print(blackboard.worldPose.y);
-    Serial.print(", ");
-    Serial.println(RAD2DEG(blackboard.worldPose.theta));
+    // Serial.print(blackboard.worldPose.x);
+    // Serial.print(", ");
+    // Serial.print(blackboard.worldPose.y);
+    // Serial.print(", ");
+    // Serial.println(RAD2DEG(blackboard.worldPose.theta));
 }

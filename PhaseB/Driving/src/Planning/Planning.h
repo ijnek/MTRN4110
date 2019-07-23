@@ -2,10 +2,9 @@
 #define PLANNING_H
 
 #include "../Blackboard/Blackboard.h"
-#include "Plan1.h"
-#include "Plan2.h"
-#include "Plan3.h"
-#include "Plan4.h"
+#include "Plan.h"
+
+#define MAX_PLAN_COUNT 30
 
 class Planning
 {
@@ -15,11 +14,9 @@ class Planning
 
   private:
     Blackboard &blackboard;
-
-    Plan1 plan1;
-    Plan2 plan2;
-    Plan3 plan3;
-    Plan4 plan4;
+    Plan *plansArray[MAX_PLAN_COUNT];  // Allocate some memory to use the waypoints vector
+    Vector<Plan*> plans;
+    int prevPlan;  // Previous plan from last tick
 };
 
 

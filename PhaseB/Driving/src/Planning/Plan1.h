@@ -8,7 +8,7 @@ class Plan1 : public WayPointPlan
   public:
     Plan1()
     {
-        addWayPoint(WayPoint(250, 0));
+        addWayPoint(WayPoint(250, 0, 0));
     }
 };
 

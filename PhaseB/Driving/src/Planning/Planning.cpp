@@ -2,52 +2,48 @@
 #include "../Constants/Constants.h"
 #include "../MovementRequest/MovementRequest.h"
 #include "../MathUtil/MathUtil.h"
+#include "PlanNone.h"
+#include "Plan1.h"
+#include "Plan2.h"
+#include "Plan3.h"
+#include "Plan4.h"
+#include "PlanTurnLeft.h"
+#include "PlanTurnRight.h"
 
 Planning::Planning(Blackboard &blackboard)
-    : blackboard(blackboard),
-      plan1(Plan1()),
-      plan2(Plan2()),
-      plan3(Plan3()),
-      plan4(Plan4())
+    : blackboard(blackboard), plans(plansArray)
 {
+    // Add plans. Note, this must be in same order as listed in Constants.h
+    plans.push_back(new PlanNone());
+    plans.push_back(new Plan1());
+    plans.push_back(new Plan2());
+    plans.push_back(new Plan3());
+    plans.push_back(new Plan4());
+    plans.push_back(new PlanTurnLeft());
+    plans.push_back(new PlanTurnRight());
 }
 
 void Planning::tick()
 {
-
-    float myX = blackboard.worldPose.x;
-    float myY = blackboard.worldPose.y;
-    float myH = blackboard.worldPose.theta;
-
-    MovementRequest movementRequest;
-
-    switch (blackboard.plan)
+    // If the plan has changed, then make sure reset is called on the new one
+    if (blackboard.plan != prevPlan)
     {
-        case PLAN1:
-        {
-            if (!plan1.done())
-                movementRequest = plan1.getMovementRequest(myX, myY, myH);
-            break;
-        }
-        case PLAN2:
-        {
-            if (!plan2.done())
-                movementRequest = plan2.getMovementRequest(myX, myY, myH);
-            break;
-        }
-        case PLAN3:
-        {
-            if (!plan3.done())
-                movementRequest = plan3.getMovementRequest(myX, myY, myH);
-            break;
-        }
-        case PLAN4:
-        {
-            if (!plan4.done())
-                movementRequest = plan4.getMovementRequest(myX, myY, myH);
-            break;
-        }
+        plans[blackboard.plan]->reset();
+        blackboard.commandCompleted = false;
     }
 
-    blackboard.movementRequest = movementRequest;
+    // Once we're done with a plan, reset plan to None on the blackboard
+    if (plans[blackboard.plan]->done())
+    {
+        blackboard.plan = PLAN_NONE;
+        blackboard.commandCompleted = true;
+    }
+
+    // Call getMovementRequest on appropriate plan, and write to blackboard
+    blackboard.movementRequest = plans[blackboard.plan]->getMovementRequest(
+        blackboard.worldPose.x,
+        blackboard.worldPose.y,
+        blackboard.worldPose.theta);
+
+    prevPlan = blackboard.plan;   // update previous plan
 }

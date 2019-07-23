@@ -10,14 +10,17 @@
 class Blackboard
 {
   public:
-    Blackboard(): gyroZ(0), worldPose(WHEELS_OFFSET_X_MM, 0, 0), plan(4){}
+    Blackboard(): gyroZ(0), plan(PLAN_NONE), resetLocalisation(false), commandCompleted(false){}
 
     Odometry odometryDiff;  // difference in odometry since last cycle
     MovementRequest movementRequest;  // current requested velocity
     Pose worldPose;  // pose relative to where we started (world(0, 0, 0) = where we started)
     float gyroZ;  // gyro z value in rad/s
     int plan;  // plan enum
-    int direction; // direction sent from bluetooth
+    int command; // command going to motion
+    bool resetLocalisation;
+    bool newCommand; // whether there is a new command, to notify planning
+    bool commandCompleted; // whether the command has been completed, by motion
 };
 
 #endif // BLACKBOARD_H

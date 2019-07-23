@@ -6,12 +6,8 @@
 class Localisation
 {
   public:
-    Localisation(Blackboard &blackboard)
-      : blackboard(blackboard)
-    {
-
-    }
-
+    Localisation(Blackboard &blackboard);
+    void reset();
     void tick();
 
   private:

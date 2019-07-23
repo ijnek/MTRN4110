@@ -5,24 +5,19 @@ void Communication::tick()
 {
     if (Serial1.available())
     {
-        String s = Serial1.readString();
-        Serial.println(s);
-
-        if (s[0] == 'P')
+        String string = Serial1.readString();
+        if (string[0] == 'P')  // Plan
         {
-            // Its a plan!
-            blackboard.plan = int(s[1]);
+            blackboard.plan = (int)string[1] - 48;   // convert ascii to number
+            // blackboard.resetLocalisation = true;
         }
-
-        if (s[0] == 'D')
+        else if (string == "90")
         {
-            // Its a direction!
-            blackboard.direction = int(s[1]);  // 1 for left, -1 for right
+            blackboard.plan = PLAN_TURN_LEFT;
         }
-    }
-    else
-    {
-        blackboard.plan = 4;
-        blackboard.direction = 0;
+        else if (string == "-90")
+        {
+            blackboard.plan = PLAN_TURN_RIGHT;
+        }
     }
 }
