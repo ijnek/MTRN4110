@@ -2,7 +2,7 @@
 #define WHEEL_HPP
 
 #include <stdint.h>
-#include "../PID/PID_v1.h"
+#include "../PID/PID.h"
 #include "../Odometry/Odometry.h"
 
 class Wheel
@@ -19,7 +19,6 @@ class Wheel
 
 private:
     bool encoderDetectingForwardsRotation;
-    uint8_t speed;
     int counterForOdometry;
 
     // addresses to encoder and motor pins on arduino board
@@ -36,9 +35,9 @@ private:
 
     // pid controller values
     double counts; //the number of the pulses detected since last cleared
-    double output;
     double setPointCounts;  // aim for counts per second
     PID pid;
+    unsigned long lastTime;  // last time pid value was updated (ms)
 };
 
 #endif // WHEEL_HPP

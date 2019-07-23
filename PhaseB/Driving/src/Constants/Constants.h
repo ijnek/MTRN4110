@@ -2,20 +2,43 @@
 #define CONSTANTS_H
 
 // Vehicle dimensions
-#define WHEEL_DIAMETER_MM 80.0f                                       // diameter of wheel (mm)
+#define WHEEL_DIAMETER_MM 83.0f                                       // diameter of wheel (mm)
 #define WHEEL_RADIUS_MM (WHEEL_DIAMETER_MM / 2)                       // radius of wheel (mm)
-#define DIST_BETWEEN_WHEELS_MM 120.0f                                 // distance between centre of two wheels (mm)
+#define DIST_BETWEEN_WHEELS_MM 110.0f                                 // distance between centre of two wheels (mm)
 #define TYRE_WIDTH_MM 10.0f                                           // width of each tyre (mm)
 #define ENCODER_COUNTS_PER_REV 1920                                   // number of counts in single revolution
 #define RAD_PER_REV (2 * PI)                                          // number of radians in one revolution
 #define DIST_PER_REVOLUTION (WHEEL_DIAMETER_MM * PI)                  // distance a wheel travels in one revolution (mm)
 #define DIST_PER_COUNT (DIST_PER_REVOLUTION / ENCODER_COUNTS_PER_REV) // distance a wheel travels in one count (mm)
+#define WHEELS_OFFSET_X_MM 17                                         // how much robot's wheels are offset forwards, relative to centre of vehicle (mm)
 
 // PID Controller for motor
-#define MOTOR_K_P 0.10
-#define MOTOR_K_I 0.020
-#define MOTOR_K_D 0.20
+#define PID_SAMPLING_PERIOD_MS 50 // duration we sample the velocity of the encoder over (ms)
+#define MOTOR_K_P 4.00
+#define MOTOR_K_I 0.00
+#define MOTOR_K_D 3.50
+#define MAX_MOTOR_PWM_OUTPUT 150 // Maximum output pwm value of a motor, increase to go faster, lower to go slower
 
-#define PID_SAMPLE_TIME_S 0.1 // duration we sample the velocity of the encoder over (s)
+// Some multipliers to make odometry estimate position better
+#define ODOMETRY_FORWARD_MULTIPLIER 1.01
+#define ODOMETRY_TURN_MULTIPLIER 0.98
+
+// Some multipliers to make left and right motor spin more evenly
+#define LEFT_MOTOR_PWM_MULTIPLIER 1.13
+#define RIGHT_MOTOR_PWM_MULTIPLIER 1.00
+
+// Bluetooth communication / Plans
+#define PLAN_NONE 0 // don't do anything
+#define PLAN1 1     // move forwards 1 block
+#define PLAN2 2     // turn, according to command given in bluetooth
+#define PLAN3 3     // move forwards 6 blocks
+#define PLAN4 4     // do the snakey course
+#define PLAN5 5     // drive, according to command
+
+// Commands for driving
+#define COMMAND_NONE 0       // don't do anything
+#define COMMAND_FORWARDS 1   // move forwards 1 block
+#define COMMAND_TURN_LEFT 2  // turn left 90 degrees
+#define COMMAND_TURN_RIGHT 3 // turn right 90 degrees
 
 #endif // CONSTANTS_H

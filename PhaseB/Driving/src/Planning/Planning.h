@@ -2,8 +2,10 @@
 #define PLANNING_H
 
 #include "../Blackboard/Blackboard.h"
-#include "../WayPoint/WayPoint.h"
-#include "../Vector/Vector.h"
+#include "Plan1.h"
+#include "Plan2.h"
+#include "Plan3.h"
+#include "Plan4.h"
 
 class Planning
 {
@@ -13,14 +15,11 @@ class Planning
 
   private:
     Blackboard &blackboard;
-    Vector<WayPoint> wayPoints;
-    int wayPointIndex;
-    bool headingClose;  // whether our heading is close, used for hysteresis purpose
 
-    float distanceErrorSquared(float currentX, float currentY, float aimX, float aimY);
-    bool distanceIsClose(float currentX, float currentY, float aimX, float aimY);
-    float headingError(float currentX, float currentY, float currentH, float aimX, float aimY);
-    bool headingIsClose(float currentX, float currentY, float currentH, float aimX, float aimY);
+    Plan1 plan1;
+    Plan2 plan2;
+    Plan3 plan3;
+    Plan4 plan4;
 };
 
 

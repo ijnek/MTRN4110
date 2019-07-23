@@ -68,7 +68,7 @@ Odometry Vehicle::calculateOdometryDiff(int leftCounter, int rightCounter)   // 
     float rightWheelDistance = rightCounter * DIST_PER_COUNT;
 
     Odometry odometryDiff;
-    odometryDiff.forward = (leftWheelDistance + rightWheelDistance) / 2.0;
-    odometryDiff.turn = atan2(rightWheelDistance - leftWheelDistance, DIST_BETWEEN_WHEELS_MM);
+    odometryDiff.forward = (leftWheelDistance + rightWheelDistance) / 2.0 * ODOMETRY_FORWARD_MULTIPLIER;
+    odometryDiff.turn = atan2(rightWheelDistance - leftWheelDistance, DIST_BETWEEN_WHEELS_MM) * ODOMETRY_TURN_MULTIPLIER;
     return odometryDiff;
 }

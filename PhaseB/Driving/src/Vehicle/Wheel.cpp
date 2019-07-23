@@ -3,6 +3,7 @@
 #include "../Constants/Constants.h"
 #include "../MathUtil/MathUtil.h"
 
+
 Wheel::Wheel(uint8_t encoderPinA, uint8_t encoderPinB, uint8_t motorEn, uint8_t motorDirA,
              uint8_t motorDirB, bool isLeftWheel, void (*f)())
     : encoderDetectingForwardsRotation(true),
@@ -15,9 +16,9 @@ Wheel::Wheel(uint8_t encoderPinA, uint8_t encoderPinB, uint8_t motorEn, uint8_t 
       isLeftWheel(isLeftWheel),
       prevEncoderPinA(0),
       counts(0),
-      output(0),
       setPointCounts(0),
-      pid(&counts, &output, &setPointCounts, MOTOR_K_P, MOTOR_K_I, MOTOR_K_D, DIRECT)
+      pid(MOTOR_K_P, MOTOR_K_I, MOTOR_K_D),
+      lastTime(millis())
 {
     // Setup encoder
     pinMode(encoderPinB, INPUT);
@@ -26,34 +27,27 @@ Wheel::Wheel(uint8_t encoderPinA, uint8_t encoderPinB, uint8_t motorEn, uint8_t 
     // Setup motor
     pinMode(motorEn, OUTPUT);
     pinMode(motorDirA, OUTPUT);
-
-    // Setup pid controller
-    pid.SetMode(AUTOMATIC); // PID is set to automatic mode
-    pid.SetSampleTime(S_TO_MS(PID_SAMPLE_TIME_S)); // Set PID sampling frequency is 100ms
-    pid.SetOutputLimits(70, 200);
 }
 
 void Wheel::tick()
 {
-    pid.SetControllerDirection(setPointCounts < counts);
-    bool result = pid.Compute(); //PID conversion is complete and returns 1
-    if (result)
+    // If we've reached sampling period, update pid
+    unsigned long time = millis();
+    if (time - lastTime > PID_SAMPLING_PERIOD_MS)
     {
-        setDirectionToForwards(counts > setPointCounts ? DIRECT : REVERSE);
-        // Serial.print("aim: ");
-        // Serial.print(setPointCounts);
-        // Serial.print(", counts: ");
-        // Serial.print(counts);
-        // Serial.print(", output: ");
-        // Serial.println(output);
+        int result = pid.compute(setPointCounts, counts);
         counts = 0; //Count clear, wait for the next count
-        writeSpeedByUint8_t(output);
-    }
-}
+        setDirectionToForwards(result > 0 ? true : false);  // set the directon of the motor
 
-void Wheel::writeSpeedByPercentage(float speed) // set speed by percentage of 0-100%
-{
-    writeSpeedByUint8_t(255 * (speed / 100.0));
+        // Modify value by multiplying it, to achieve similar results in left and right motor
+        if (isLeftWheel)
+            result *= LEFT_MOTOR_PWM_MULTIPLIER;
+        else
+            result *= RIGHT_MOTOR_PWM_MULTIPLIER;
+        writeSpeedByUint8_t(abs(result));
+
+        lastTime = time; // update lasttime pid was updated
+    }
 }
 
 void Wheel::writeSpeedByUint8_t(uint8_t speed) // set speed directly by uint8_t
@@ -63,7 +57,6 @@ void Wheel::writeSpeedByUint8_t(uint8_t speed) // set speed directly by uint8_t
 
 void Wheel::setAngularPosition(float angularPosition) // set angular position of wheel (rad)
 {
-    angularPosition = CLAMP(-DEG2RAD(500), angularPosition, DEG2RAD(500));
     setPointCounts = angularPosition * ENCODER_COUNTS_PER_REV / RAD_PER_REV;
 }
 
