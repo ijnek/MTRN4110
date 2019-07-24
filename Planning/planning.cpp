@@ -131,7 +131,7 @@ void Graph::initStart(char* map){
     // Get the starting positions from map
     String map_str = String(map);
     int posS = map_str.indexOf("S"); // position of 'S'
-    startRow = GRID_ROW(map_str.substring(posS+1, posS+2).toInt());
+    startRow = map_str.substring(posS+1, posS+2).toInt();
     startCol = map_str.substring(posS+2, posS+3).toInt();
 }
 
@@ -202,7 +202,7 @@ edge* Graph::getAdjVal(edge row, edge col){
   for(int i = 0; i < 4; i++){ // Iterate through adjacent cells
     switch(i){
       case 0: // North Wall
-        gridRow = GRID_ROW(row)-1;
+        gridRow = GRID_ROW(row) - 1;
         gridCol = col;
         break;
       case 1: // South Wall
@@ -247,9 +247,10 @@ void Graph::floodFill(){
   for(int i = 0; i < ROWS; i++){
     for(int j = 0; j < COLS; j++){
       paths[i][j] = N;
-      if(i == startRow && j == startCol) paths[i][j] = 0; // Starting cell
     }
-  }  
+  }
+  paths[startRow][startCol] = 0; // Starting cell
+  
   edge goal = 0;        // Value we want to reach
   edge currentVal = 0;  // value we currently have
   int mazeVal = 1;      // flag for checking if paths has updated
@@ -285,7 +286,7 @@ void Graph::floodFill(){
  */
 bool Graph::calcShortestPath(){
   floodFill(); // populate the paths structure
-    
+
   int N = ROWS*COLS - 1;
   edge goalVal = paths[ROWS/2][COLS/2];
   if(goalVal == N) return false; // No valid path exists
@@ -422,7 +423,7 @@ String Graph::getSymbol(edge row, edge col){
         return " X *";
     }
   }
-  if(row == startRow && col == startCol) {
+  if(row == GRID_ROW(startRow) && col == startCol) {
     switch(wall){
       case WALL:
         return " S |";
