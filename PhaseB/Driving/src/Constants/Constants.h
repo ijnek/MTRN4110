@@ -12,12 +12,15 @@
 #define DIST_PER_COUNT (DIST_PER_REVOLUTION / ENCODER_COUNTS_PER_REV) // distance a wheel travels in one count (mm)
 #define WHEELS_OFFSET_X_MM 17                                         // how much robot's wheels are offset forwards, relative to centre of vehicle (mm)
 
+// Maze dimensions
+#define CELL_SIZE 250  // size of cell (mm)
+
 // PID Controller for motor
 #define PID_SAMPLING_PERIOD_MS 50 // duration we sample the velocity of the encoder over (ms)
 #define MOTOR_K_P 4.00
 #define MOTOR_K_I 0.00
 #define MOTOR_K_D 8.00
-#define MAX_MOTOR_PWM_OUTPUT 100 // Maximum output pwm value of a motor, increase to go faster, lower to go slower
+#define MAX_MOTOR_PWM_OUTPUT 80 // Maximum output pwm value of a motor, increase to go faster, lower to go slower
 
 // Some multipliers to make odometry estimate position better
 #define ODOMETRY_FORWARD_MULTIPLIER 1.00
@@ -35,5 +38,6 @@
 #define PLAN4 4     // do the snakey course
 #define PLAN_TURN_LEFT 5  // turn left 90 degrees
 #define PLAN_TURN_RIGHT 6  // turn right 90 degrees
+#define PLAN_FORWARDS 7  // go forwards
 
 #endif // CONSTANTS_H

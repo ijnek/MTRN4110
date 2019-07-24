@@ -9,6 +9,7 @@
 #include "Plan4.h"
 #include "PlanTurnLeft.h"
 #include "PlanTurnRight.h"
+#include "PlanForwards.h"
 
 Planning::Planning(Blackboard &blackboard)
     : blackboard(blackboard), plans(plansArray)
@@ -21,6 +22,7 @@ Planning::Planning(Blackboard &blackboard)
     plans.push_back(new Plan4());
     plans.push_back(new PlanTurnLeft());
     plans.push_back(new PlanTurnRight());
+    plans.push_back(new PlanForwards());
 }
 
 void Planning::tick()
