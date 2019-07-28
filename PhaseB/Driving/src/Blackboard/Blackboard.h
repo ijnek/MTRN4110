@@ -20,6 +20,9 @@ class Blackboard
     int command; // command going to motion
     bool resetLocalisation;
     bool commandCompleted; // whether the command has been completed, by motion
+    bool wallInFront;  // whether there is a wall in front
+    bool wallOnLeft;  // whether there is a wall on left side
+    bool wallOnRight;  // whether there is a wall on right side
 };
 
 #endif // BLACKBOARD_H

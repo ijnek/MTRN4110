@@ -15,4 +15,9 @@
 #define ENCODER_PIN_A_R 2
 #define ENCODER_PIN_B_R 11
 
+// Define the pins for the left lidar
+#define LIDAR_LEFT_SHDN 23
+#define LIDAR_RIGHT_SHDN 22
+#define LIDAR_FRONT_SHDN 24
+
 #endif // PIN_DEFS_HPP
