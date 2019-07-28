@@ -18,7 +18,6 @@ void Exploration::tick()
 
     // update our map
     explorationMaze.explorationGrid[y][x] = GRID_EXPLORED;
-
     switch(blackboard.facingDirection)
     {
         case(NORTH):
@@ -53,7 +52,89 @@ void Exploration::tick()
 
     // print the updated maze
     explorationMaze.printMaze();
+    PRINT("\n");
 
+    // check if we've figured out our starting pose, depending on the updates
+    if (blackboard.startingPose == Unknown)
+    {
+        if (x >= EXPLORATION_STARTING_X + (MIN(ROWS, COLS) - 1))
+        {
+            if (explorationMaze.verticalWall[y][x+1] == WALL_NO_EXIST)
+            {
+                blackboard.startingPose = LeftTopFacingDown;
+            }
+        }
+        if (x <= EXPLORATION_STARTING_X - (MIN(ROWS, COLS) - 1))
+        {
+            if (explorationMaze.verticalWall[y][x] == WALL_NO_EXIST)
+            {
+                blackboard.startingPose = RightTopFacingDown;
+            }
+        }
+        if (y >= EXPLORATION_STARTING_Y + (MIN(ROWS, COLS) - 1) && x > EXPLORATION_STARTING_X)
+        {
+            if (explorationMaze.verticalWall[y+1][x] == WALL_NO_EXIST)
+            {
+                blackboard.startingPose = RightTopFacingLeft;
+            }
+        }
+        if (y >= EXPLORATION_STARTING_Y + (MIN(ROWS, COLS) - 1) && x < EXPLORATION_STARTING_X)
+        {
+            if (explorationMaze.verticalWall[y+1][x] == WALL_NO_EXIST)
+            {
+                blackboard.startingPose = LeftTopFacingRight;
+            }
+        }
+    }
+
+    if (!blackboard.reachedGoal)
+    {
+        // If we know our starting pose, then we know if we're at the goal
+        switch (blackboard.startingPose)
+        {
+            case(LeftTopFacingDown):
+            {
+                if (x == EXPLORATION_STARTING_X + (MAX(ROWS, COLS) - 1) / 2 &&
+                    y == EXPLORATION_STARTING_Y + (MIN(ROWS, COLS) - 1) / 2)
+                {
+                    PRINT("GOAL\n");
+                    blackboard.reachedGoal = true;
+                }
+                break;
+            }
+            case(LeftTopFacingRight):
+            {
+                if (x == EXPLORATION_STARTING_X - (MIN(ROWS, COLS) - 1) / 2 &&
+                    y == EXPLORATION_STARTING_Y + (MAX(ROWS, COLS) - 1) / 2)
+                {
+                    PRINT("GOAL\n");
+                    blackboard.reachedGoal = true;
+                }
+                break;
+            }
+            case(RightTopFacingLeft):
+            {
+                if (x == EXPLORATION_STARTING_X + (MIN(ROWS, COLS) - 1) / 2 &&
+                    y == EXPLORATION_STARTING_Y + (MAX(ROWS, COLS) - 1) / 2)
+                {
+                    PRINT("GOAL\n");
+                    blackboard.reachedGoal = true;
+                }
+                break;
+            }
+            case(RightTopFacingDown):
+                if (x == EXPLORATION_STARTING_X - (MAX(ROWS, COLS) - 1) / 2 &&
+                    y == EXPLORATION_STARTING_Y + (MIN(ROWS, COLS) - 1) / 2)
+                {
+                    PRINT("GOAL\n");
+                    blackboard.reachedGoal = true;
+                }
+                break;
+            default:
+            {
+            }
+        }
+    }
 
     // Consider any new possible exploration moves
     Direction moveDirectionArray[MAX_POSSIBLE_MOVE_DIRECTIONS];  // Allocate some memory to use the waypoints vector
@@ -62,34 +143,6 @@ void Exploration::tick()
     // pick next move
     switch(lastMove)
     {
-        // case(NORTH):
-        // {
-        //     if (!blackboard.wallInFront && explorationMaze.explorationGrid[x][y-1] == GRID_UNEXPLORED) possibleMoveDirections.push_back(NORTH);
-        //     if (!blackboard.wallOnRight && explorationMaze.explorationGrid[x+1][y] == GRID_UNEXPLORED) possibleMoveDirections.push_back(EAST); 
-        //     if (!blackboard.wallOnLeft && explorationMaze.explorationGrid[x-1][y] == GRID_UNEXPLORED) possibleMoveDirections.push_back(WEST); 
-        //     break;
-        // }
-        // case(SOUTH):
-        // {
-        //     if (!blackboard.wallInFront && explorationMaze.explorationGrid[x][y+1] == GRID_UNEXPLORED) possibleMoveDirections.push_back(SOUTH);
-        //     if (!blackboard.wallOnRight && explorationMaze.explorationGrid[x-1][y] == GRID_UNEXPLORED) possibleMoveDirections.push_back(WEST); 
-        //     if (!blackboard.wallOnLeft && explorationMaze.explorationGrid[x+1][y] == GRID_UNEXPLORED) possibleMoveDirections.push_back(EAST); 
-        //     break;
-        // }
-        // case(EAST):
-        // {
-        //     if (!blackboard.wallInFront && explorationMaze.explorationGrid[x+1][y] == GRID_UNEXPLORED) possibleMoveDirections.push_back(EAST);
-        //     if (!blackboard.wallOnRight && explorationMaze.explorationGrid[x][y+1] == GRID_UNEXPLORED) possibleMoveDirections.push_back(SOUTH); 
-        //     if (!blackboard.wallOnLeft && explorationMaze.explorationGrid[x][y-1] == GRID_UNEXPLORED) possibleMoveDirections.push_back(NORTH);             
-        //     break;
-        // }
-        // case(WEST):
-        // {
-        //     if (!blackboard.wallInFront && explorationMaze.explorationGrid[x-1][y] == GRID_UNEXPLORED) possibleMoveDirections.push_back(WEST);
-        //     if (!blackboard.wallOnRight && explorationMaze.explorationGrid[x][y-1] == GRID_UNEXPLORED) possibleMoveDirections.push_back(NORTH);
-        //     if (!blackboard.wallOnLeft && explorationMaze.explorationGrid[x][y+1] == GRID_UNEXPLORED) possibleMoveDirections.push_back(SOUTH);       
-        //     break;
-        // }
         case(NORTH):
         {
             if (!blackboard.wallInFront && explorationMaze.explorationGrid[y-1][x] == GRID_UNEXPLORED) possibleMoveDirections.push_back(NORTH);
@@ -123,13 +176,6 @@ void Exploration::tick()
             break;
         }
     }
-
-    for (unsigned i = 0; i < possibleMoveDirections.size(); ++i)
-    {
-        PRINT(possibleMoveDirections[i]);
-        PRINT(", ");
-    }
-    PRINT("\n");
 
     // Choose what move to make
     if (!possibleMoveDirections.empty())
@@ -170,6 +216,7 @@ void Exploration::tick()
             lastMove = NONE;
     }
 
+    // in simulation, we move the robot here
     switch(lastMove)
     {
         case(NORTH):
@@ -189,6 +236,4 @@ void Exploration::tick()
             break;
     }
     blackboard.facingDirection = lastMove;
-
-    std::cout << lastMove << std::endl;
 }

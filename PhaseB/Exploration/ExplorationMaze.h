@@ -22,6 +22,11 @@ using namespace std;
 #define V_WALL_ROWS EXPLORATION_GRID_ROWS
 #define V_WALL_COLS EXPLORATION_GRID_COLS + 1
 
+// Always assume we start at the following position
+#define EXPLORATION_STARTING_X MAX(ROWS, COLS) - 1
+#define EXPLORATION_STARTING_Y 0
+#define EXPLORATION_STARTING_FACING_DIRECTION SOUTH
+
 #define VERT_EXIST_VISUAL '|'
 #define VERT_NO_EXIST_VISUAL ' '
 #define VERT_UNEXPLORED_VISUAL '*'
