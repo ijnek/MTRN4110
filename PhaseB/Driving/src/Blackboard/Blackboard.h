@@ -11,7 +11,7 @@
 class Blackboard
 {
   public:
-    Blackboard(): gyroZ(0), plan(PLAN_NONE), resetLocalisation(false), wallInFront(false), wallOnLeft(false), wallOnRight(false), commandCompleted(false), startDetected(false){}
+    Blackboard(): gyroZ(0), plan(PLAN_NONE), resetLocalisation(false), wallInFront(false), wallOnLeft(false), wallOnRight(false), commandCompleted(false), startDetected(false), nextMoveCommandReceived(false){}
 
     Odometry odometryDiff;  // difference in odometry since last cycle
     MovementRequest movementRequest;  // current requested velocity
@@ -27,6 +27,7 @@ class Blackboard
     WayPoint nextWayPoint;  // next way point to go to
     bool reachedGoal;  // whether we have reached the goal or not   
     bool startDetected;  // whether we have detected the start signal 
+    bool nextMoveCommandReceived;  // whether we have received the next move command through bluetooth
 };
 
 #endif // BLACKBOARD_H

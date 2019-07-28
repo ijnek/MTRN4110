@@ -91,13 +91,6 @@ class ExplorationMaze
 
     void printMaze(int mapX, int mapY, Direction facingDirection, int startRow=0, int startCol=0, int endRow=EXPLORATION_GRID_ROWS-1, int endCol=EXPLORATION_GRID_COLS-1)
     {
-        Serial1.print(startRow);
-        Serial1.print(", ");
-        Serial1.print(startCol);
-        Serial1.print(", ");
-        Serial1.print(endRow);
-        Serial1.print(", ");
-        Serial1.println(endCol);
         // print vert, hori, vert, hori, ...
         for (int row = startRow * 2; row < (endRow + 1) * 2 + 1; ++row)
         {
@@ -205,6 +198,23 @@ class ExplorationMaze
             }
         }
         Serial1.print("\n");
+    }
+
+    void fillVerticalWall(int col)
+    {
+        for (unsigned i = 0; i < V_WALL_ROWS; ++i)
+        {
+            verticalWall[i][col] = WALL_EXIST;
+        }
+    }
+
+
+    void fillHorizontalWall(int row)
+    {
+        for (unsigned i = 0; i < H_WALL_COLS; ++i)
+        {
+            horizontalWall[row][i] = WALL_EXIST;
+        }
     }
 };
 

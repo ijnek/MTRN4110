@@ -17,7 +17,8 @@ class Exploration
         blackboard(blackboard),
         mapX(EXPLORATION_STARTING_X),
         mapY(EXPLORATION_STARTING_Y),
-        facingDirection(EXPLORATION_STARTING_FACING_DIRECTION)
+        facingDirection(EXPLORATION_STARTING_FACING_DIRECTION),
+        startingPose(Unknown)
     {
     }
     void tick();

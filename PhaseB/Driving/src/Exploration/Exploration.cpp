@@ -15,7 +15,11 @@ void Exploration::tick()
 {
     // If we've just finished a command, then read lidars
     if (blackboard.startDetected && blackboard.commandCompleted)
+    // if (blackboard.startDetected && blackboard.commandCompleted && blackboard.nextMoveCommandReceived)
     {    
+
+        blackboard.nextMoveCommandReceived = false; // reset this flag
+
         int x = mapX;
         int y = mapY;
 
@@ -65,6 +69,11 @@ void Exploration::tick()
                 if (explorationMaze.verticalWall[y][x+1] == WALL_NO_EXIST)
                 {
                     startingPose = LeftTopFacingDown;
+                    // fill the outer walls of the maze
+                    explorationMaze.fillHorizontalWall(0);
+                    explorationMaze.fillHorizontalWall(COLS);
+                    explorationMaze.fillVerticalWall(EXPLORATION_STARTING_X);
+                    explorationMaze.fillVerticalWall(EXPLORATION_STARTING_X + ROWS);                  
                 }
             }
             if (x <= EXPLORATION_STARTING_X - (MIN(ROWS, COLS) - 1))
@@ -72,20 +81,35 @@ void Exploration::tick()
                 if (explorationMaze.verticalWall[y][x] == WALL_NO_EXIST)
                 {
                     startingPose = RightTopFacingDown;
+                    // fill the outer walls of the maze
+                    explorationMaze.fillHorizontalWall(0);
+                    explorationMaze.fillHorizontalWall(COLS);
+                    explorationMaze.fillVerticalWall(EXPLORATION_STARTING_X + 1 - ROWS);
+                    explorationMaze.fillVerticalWall(EXPLORATION_STARTING_X + 1);                    
                 }
             }
             if (y >= EXPLORATION_STARTING_Y + (MIN(ROWS, COLS) - 1) && x > EXPLORATION_STARTING_X)
             {
-                if (explorationMaze.verticalWall[y+1][x] == WALL_NO_EXIST)
+                if (explorationMaze.horizontalWall[y+1][x] == WALL_NO_EXIST)
                 {
                     startingPose = RightTopFacingLeft;
+                    // fill the outer walls of the maze
+                    explorationMaze.fillHorizontalWall(0);
+                    explorationMaze.fillHorizontalWall(ROWS);
+                    explorationMaze.fillVerticalWall(EXPLORATION_STARTING_X);
+                    explorationMaze.fillVerticalWall(EXPLORATION_STARTING_X + COLS);
                 }
             }
             if (y >= EXPLORATION_STARTING_Y + (MIN(ROWS, COLS) - 1) && x < EXPLORATION_STARTING_X)
             {
-                if (explorationMaze.verticalWall[y+1][x] == WALL_NO_EXIST)
+                if (explorationMaze.horizontalWall[y+1][x] == WALL_NO_EXIST)
                 {
                     startingPose = LeftTopFacingRight;
+                    // fill the outer walls of the maze
+                    explorationMaze.fillHorizontalWall(0);
+                    explorationMaze.fillHorizontalWall(ROWS);
+                    explorationMaze.fillVerticalWall(EXPLORATION_STARTING_X - COLS + 1);
+                    explorationMaze.fillVerticalWall(EXPLORATION_STARTING_X + 1);
                 }
             }
         }

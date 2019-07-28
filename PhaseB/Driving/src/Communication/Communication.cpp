@@ -19,5 +19,9 @@ void Communication::tick()
         {
             blackboard.plan = PLAN_TURN_RIGHT;
         }
+        else if (string == "1")
+        {
+            blackboard.nextMoveCommandReceived = true;
+        }
     }
 }
