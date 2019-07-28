@@ -6,11 +6,13 @@
 #include "src/Localisation/Localisation.h"
 #include "src/Sensing/Sensing.h"
 #include "src/Communication/Communication.h"
+#include "src/Exploration/Exploration.h"
 #include <Wire.h>
 
 Blackboard blackboard;
 Communication communication(blackboard);
 Sensing sensing(blackboard);
+Exploration exploration(blackboard);
 Planning planning(blackboard);
 Vehicle vehicle(blackboard);
 Localisation localisation(blackboard);
@@ -22,8 +24,9 @@ void setup() {
 }
 
 void loop() {
-    sensing.tick();
     communication.tick();
+    sensing.tick();
+    exploration.tick();
     planning.tick();
     vehicle.tick();
     localisation.tick();

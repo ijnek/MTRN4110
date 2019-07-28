@@ -6,11 +6,12 @@
 #include "../Vector/Vector.h"
 #include "../Pose/Pose.h"
 #include "../Constants/Constants.h"
+#include "../WayPoint/WayPoint.h"
 
 class Blackboard
 {
   public:
-    Blackboard(): gyroZ(0), plan(PLAN_NONE), resetLocalisation(false), commandCompleted(false){}
+    Blackboard(): gyroZ(0), plan(PLAN_NONE), resetLocalisation(false), wallInFront(false), wallOnLeft(false), wallOnRight(false), commandCompleted(false), startDetected(false){}
 
     Odometry odometryDiff;  // difference in odometry since last cycle
     MovementRequest movementRequest;  // current requested velocity
@@ -23,6 +24,9 @@ class Blackboard
     bool wallInFront;  // whether there is a wall in front
     bool wallOnLeft;  // whether there is a wall on left side
     bool wallOnRight;  // whether there is a wall on right side
+    WayPoint nextWayPoint;  // next way point to go to
+    bool reachedGoal;  // whether we have reached the goal or not   
+    bool startDetected;  // whether we have detected the start signal 
 };
 
 #endif // BLACKBOARD_H

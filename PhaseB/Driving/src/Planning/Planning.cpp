@@ -10,6 +10,7 @@
 #include "PlanTurnLeft.h"
 #include "PlanTurnRight.h"
 #include "PlanForwards.h"
+#include "PlanNextWayPoint.h"
 
 Planning::Planning(Blackboard &blackboard)
     : blackboard(blackboard), plans(plansArray)
@@ -23,6 +24,7 @@ Planning::Planning(Blackboard &blackboard)
     plans.push_back(new PlanTurnLeft());
     plans.push_back(new PlanTurnRight());
     plans.push_back(new PlanForwards());
+    plans.push_back(new PlanNextWayPoint());
 }
 
 void Planning::tick()
@@ -32,6 +34,12 @@ void Planning::tick()
     {
         plans[blackboard.plan]->reset();
         blackboard.commandCompleted = false;
+
+        // make sure we read the waypoint from blackboard if we're using the nextWayPoint plan (HACK ALERT :p)
+        if (blackboard.plan == PLAN_NEXT_WAYPOINT)
+        {
+            reinterpret_cast<WayPointPlan*>(plans[blackboard.plan])->addWayPoint(blackboard.nextWayPoint);
+        }
     }
 
     // Once we're done with a plan, reset plan to None on the blackboard

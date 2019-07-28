@@ -94,9 +94,19 @@ public:
         firstTime = false;
     }
 
-    // If we've just finished a command, then read lidars
-    if (blackboard.commandCompleted)
+    if (!blackboard.startDetected)
     {
+        // If we haven't detected the start, keep checking for the start
+        bool prevWallInFront = blackboard.wallInFront;
+        blackboard.wallInFront = lidars[LIDAR_FRONT].readRangeSingleMillimeters() < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
+        blackboard.wallOnLeft = lidars[LIDAR_LEFT].readRangeSingleMillimeters() < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
+        blackboard.wallOnRight = lidars[LIDAR_RIGHT].readRangeSingleMillimeters() < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
+        if (prevWallInFront == true && blackboard.wallInFront == false)
+            blackboard.startDetected = true;
+    }
+    else if (blackboard.commandCompleted)
+    {
+        // If we've just finished a command, then read lidars
         blackboard.wallInFront = lidars[LIDAR_FRONT].readRangeSingleMillimeters() < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
         blackboard.wallOnLeft = lidars[LIDAR_LEFT].readRangeSingleMillimeters() < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
         blackboard.wallOnRight = lidars[LIDAR_RIGHT].readRangeSingleMillimeters() < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
