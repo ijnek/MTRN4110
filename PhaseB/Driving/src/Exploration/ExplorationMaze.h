@@ -31,7 +31,9 @@
 #define HORI_NO_EXIST_VISUAL "   "
 #define HORI_UNEXPLORED_VISUAL "***"
 #define GRID_EXPLORED_VISUAL " "
-#define GRID_UNEXPLORED_VISUAL "*"
+// #define GRID_UNEXPLORED_VISUAL "*"
+#define GRID_UNEXPLORED_VISUAL " "
+#define GRID_GOAL_LOCATION_VISUAL "X"
 // #define ROBOT_VISUAL_FACING_NORTH "^"
 // #define ROBOT_VISUAL_FACING_SOUTH "v"
 // #define ROBOT_VISUAL_FACING_EAST ">"
@@ -150,6 +152,11 @@ class ExplorationMaze
                         case(WEST): Serial1.print(ROBOT_VISUAL_FACING_WEST); break;
                         default: Serial1.print(ROBOT_VISUAL_FACING_NONE); break;
                     }
+                }
+                // HACK ALERT (kenji) : following else if statement hardcodes the "Goal position", REMOVE IF POSSIBLE
+                else if (col == (endCol + startCol) / 2 && row == (MAX(ROWS, COLS) - 1) / 2)
+                {
+                    Serial1.print(GRID_GOAL_LOCATION_VISUAL);
                 }
                 else
                 {

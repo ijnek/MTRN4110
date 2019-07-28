@@ -125,7 +125,7 @@ void Exploration::tick()
                         y == EXPLORATION_STARTING_Y + (MIN(ROWS, COLS) - 1) / 2)
                     {
                         blackboard.reachedGoal = true;
-                        explorationMaze.printMaze(mapX, mapY, facingDirection,
+                        explorationMaze.printMaze(EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
                                                  EXPLORATION_STARTING_Y, EXPLORATION_STARTING_X,
                                                  EXPLORATION_STARTING_Y + (COLS - 1), EXPLORATION_STARTING_X + (ROWS - 1));
                         Serial1.print("\n\n");
@@ -138,7 +138,7 @@ void Exploration::tick()
                         y == EXPLORATION_STARTING_Y + (MAX(ROWS, COLS) - 1) / 2)
                     {
                         blackboard.reachedGoal = true;
-                        explorationMaze.printMaze(mapX, mapY, facingDirection,
+                        explorationMaze.printMaze(EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
                                                   EXPLORATION_STARTING_Y, EXPLORATION_STARTING_X - (COLS - 1),
                                                   EXPLORATION_STARTING_Y + (ROWS - 1), EXPLORATION_STARTING_X);
                         Serial1.print("\n\n");
@@ -151,7 +151,7 @@ void Exploration::tick()
                         y == EXPLORATION_STARTING_Y + (MAX(ROWS, COLS) - 1) / 2)
                     {
                         blackboard.reachedGoal = true;
-                        explorationMaze.printMaze(mapX, mapY, facingDirection,
+                        explorationMaze.printMaze(EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
                                                   EXPLORATION_STARTING_Y, EXPLORATION_STARTING_X,
                                                   EXPLORATION_STARTING_Y + (ROWS - 1), EXPLORATION_STARTING_X + (COLS - 1));
                         Serial1.print("\n\n");                                                  
@@ -163,7 +163,7 @@ void Exploration::tick()
                         y == EXPLORATION_STARTING_Y + (MIN(ROWS, COLS) - 1) / 2)
                     {
                         blackboard.reachedGoal = true;
-                        explorationMaze.printMaze(mapX, mapY, facingDirection,
+                        explorationMaze.printMaze(EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
                                                   EXPLORATION_STARTING_X - ROWS + 1, EXPLORATION_STARTING_Y,
                                                   EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y + COLS);
                         Serial1.print("\n\n");                                                  
