@@ -7,6 +7,7 @@
 #include "src/Sensing/Sensing.h"
 #include "src/Communication/Communication.h"
 #include "src/Exploration/Exploration.h"
+#include "src/LED/LED.h"
 #include <Wire.h>
 
 Blackboard blackboard;
@@ -16,6 +17,7 @@ Exploration exploration(blackboard);
 Planning planning(blackboard);
 Vehicle vehicle(blackboard);
 Localisation localisation(blackboard);
+LED led(blackboard);
 
 void setup() {
     Serial.begin(9600);  // serial monitor
@@ -30,6 +32,7 @@ void loop() {
     planning.tick();
     vehicle.tick();
     localisation.tick();
+    led.tick();
 
     // Serial.print("pose: ");
     // Serial.print(blackboard.worldPose.x);
