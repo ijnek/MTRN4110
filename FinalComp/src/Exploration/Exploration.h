@@ -1,8 +1,8 @@
 #ifndef EXPLORATION_H
 #define EXPLORATION_H
 
-#include "../Vector/Vector.h"
-#include "../Blackboard/Blackboard.h"
+#include "../Utils/Vector/Vector.h"
+#include "../Types/Blackboard.h"
 #include "ExplorationMaze.h"
 #include "ExplorationEnums.h"
 

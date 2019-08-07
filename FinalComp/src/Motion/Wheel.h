@@ -2,8 +2,8 @@
 #define WHEEL_HPP
 
 #include <stdint.h>
-#include "../PID/PID.h"
-#include "../Odometry/Odometry.h"
+#include "PID/PID.h"
+#include "../Types/Odometry.h"
 
 class Wheel
 {

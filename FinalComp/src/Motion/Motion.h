@@ -1,8 +1,8 @@
-#ifndef MOTION_HPP
-#define MOTION_HPP
+#ifndef MOTION_H
+#define MOTION_H
 
-#include "../MovementRequest/MovementRequest.h"
-#include "../Blackboard/Blackboard.h"
+#include "../Types/MovementRequest.h"
+#include "../Types/Blackboard.h"
 
 class Motion
 {
@@ -23,4 +23,4 @@ class Motion
 static void leftEncoderInterrupt();
 static void rightEncoderInterrupt();
 
-#endif // MOTION_HPP
+#endif // MOTION_H

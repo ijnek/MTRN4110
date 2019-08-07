@@ -1,7 +1,7 @@
 #ifndef BEHAVIOUR_H
 #define BEHAVIOUR_H
 
-#include "../Blackboard/Blackboard.h"
+#include "../Types/Blackboard.h"
 #include "BehaviourPlan.h"
 
 #define MAX_BEHAVIOUR_COUNT 30

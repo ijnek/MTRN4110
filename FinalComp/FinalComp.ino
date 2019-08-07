@@ -1,6 +1,5 @@
-#include "src/MathUtil/MathUtil.h"
-#include "src/Constants/Constants.h"
-#include "src/Blackboard/Blackboard.h"
+#include "src/Utils/MathUtil/MathUtil.h"
+#include "src/Types/Blackboard.h"
 #include "src/Behaviour/Behaviour.h"
 #include "src/Motion/Motion.h"
 #include "src/Localisation/Localisation.h"

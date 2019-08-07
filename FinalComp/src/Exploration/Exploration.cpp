@@ -1,7 +1,8 @@
 #include "Exploration.h"
-#include "../Vector/Vector.h"
+#include "../Utils/Vector/Vector.h"
 #include "ExplorationMaze.h"
-#include "../MathUtil/MathUtil.h"
+#include "../Utils/MathUtil/MathUtil.h"
+#include "../Constants/MazeConstants.h"
 
 #define MAX_POSSIBLE_MOVE_DIRECTIONS 4
 

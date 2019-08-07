@@ -1,12 +1,12 @@
 #ifndef BLACKBOARD_H
 #define BLACKBOARD_H
 
-#include "../Odometry/Odometry.h"
-#include "../Types/MovementRequest.h"
+#include "Odometry.h"
+#include "MovementRequest.h"
 #include "../Utils/Vector/Vector.h"
-#include "../Pose/Pose.h"
-#include "../Constants/Constants.h"
-#include "../Types/WayPoint.h"
+#include "Pose.h"
+#include "../Constants/NetworkingConstants.h"
+#include "WayPoint.h"
 
 class Blackboard
 {

@@ -1,7 +1,7 @@
 #ifndef COMMUNICATION_H
 #define COMMUNICATION_H
 
-#include "../Blackboard/Blackboard.h"
+#include "../Types/Blackboard.h"
 
 class Communication
 {

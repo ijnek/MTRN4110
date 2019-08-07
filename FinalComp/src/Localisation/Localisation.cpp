@@ -1,6 +1,6 @@
 #include "Localisation.h"
-#include "../Constants/Constants.h"
-#include "../MathUtil/MathUtil.h"
+#include "../Constants/VehicleConstants.h"
+#include "../Utils/MathUtil/MathUtil.h"
 
 Localisation::Localisation(Blackboard &blackboard)
     : blackboard(blackboard)

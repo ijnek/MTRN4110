@@ -1,9 +1,9 @@
 #include "Motion.h"
 #include "Wheel.h"
-#include "../PinDefs/PinDefs.h"
+#include "../Constants/PinDefs.h"
+#include "../Constants/VehicleConstants.h"
 #include "Arduino.h"
-#include "../Constants/Constants.h"
-#include "../MathUtil/MathUtil.h"
+#include "../Utils/MathUtil/MathUtil.h"
 
 // Instances of the wheel, had to do it this way because of the static interrupt functions
 Wheel wheelL(ENCODER_PIN_A_L, ENCODER_PIN_B_L, MOTOR_EN_L,

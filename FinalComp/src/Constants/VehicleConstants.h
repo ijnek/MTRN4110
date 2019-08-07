@@ -1,5 +1,5 @@
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#ifndef VEHICLE_CONSTANTS_H
+#define VEHICLE_CONSTANTS_H
 
 // Vehicle dimensions
 #define WHEEL_DIAMETER_MM 80.0f                                       // diameter of wheel (mm)
@@ -11,9 +11,6 @@
 #define DIST_PER_REVOLUTION (WHEEL_DIAMETER_MM * PI)                  // distance a wheel travels in one revolution (mm)
 #define DIST_PER_COUNT (DIST_PER_REVOLUTION / ENCODER_COUNTS_PER_REV) // distance a wheel travels in one count (mm)
 #define WHEELS_OFFSET_X_MM 17                                         // how much robot's wheels are offset forwards, relative to centre of vehicle (mm)
-
-// Maze dimensions
-#define CELL_SIZE 250 // size of cell (mm)
 
 // PID Controller for motor
 #define PID_SAMPLING_PERIOD_MS 50 // duration we sample the velocity of the encoder over (ms)
@@ -30,11 +27,4 @@
 #define LEFT_MOTOR_PWM_MULTIPLIER 1.08
 #define RIGHT_MOTOR_PWM_MULTIPLIER 1.00
 
-// Bluetooth communication / Behaviours
-#define BEHAVIOUR_NONE 0          // don't do anything
-#define BEHAVIOUR_TURN_LEFT 5     // turn left 90 degrees
-#define BEHAVIOUR_TURN_RIGHT 6    // turn right 90 degrees
-#define BEHAVIOUR_FORWARDS 7      // go forwards
-#define BEHAVIOUR_NEXT_WAYPOINT 8 // plan using the "nextWayPoint" variable on the blackboard
-
-#endif // CONSTANTS_H
+#endif // VEHICLE_CONSTANTS_H

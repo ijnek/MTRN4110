@@ -1,7 +1,7 @@
 #ifndef LOCALISATION_H
 #define LOCALISATION_H
 
-#include "../Blackboard/Blackboard.h"
+#include "../Types/Blackboard.h"
 
 class Localisation
 {

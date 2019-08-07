@@ -1,7 +1,7 @@
 #ifndef IMU_H
 #define IMU_H
 
-#include "../Blackboard/Blackboard.h"
+#include "../../Types/Blackboard.h"
 
 class IMU
 {

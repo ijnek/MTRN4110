@@ -1,9 +1,9 @@
 #ifndef WAY_POINT_BEHAVIOUR_H
 #define WAY_POINT_BEHAVIOUR_H
 
-#include "../WayPoint/WayPoint.h"
-#include "../Vector/Vector.h"
-#include "../MovementRequest/MovementRequest.h"
+#include "../Types/WayPoint.h"
+#include "../Utils/Vector/Vector.h"
+#include "../Types/MovementRequest.h"
 #include "BehaviourPlan.h"
 
 #define MAX_WAYPOINT_COUNT 30

@@ -1,8 +1,8 @@
 #ifndef LED_H
 #define LED_H
 
-#include "../PinDefs/PinDefs.h"
-#include "../Blackboard/Blackboard.h"
+#include "../Constants/PinDefs.h"
+#include "../Types/Blackboard.h"
 
 class LED
 {

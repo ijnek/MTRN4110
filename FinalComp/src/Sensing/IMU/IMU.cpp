@@ -1,6 +1,6 @@
 #include "IMU.h"
 #include "Arduino.h"
-#include "../MathUtil/MathUtil.h"
+#include "../../Utils/MathUtil/MathUtil.h"
 #include <Wire.h>
 #define MPU_addr 0x68    // I2C address of the MPU-6050
 #define GYRO_SCALE 131.0 // gotta scale the gyro, see explanation here (https://electronics.stackexchange.com/questions/39714/how-to-read-a-gyro-accelerometer)

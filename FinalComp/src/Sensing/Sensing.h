@@ -1,10 +1,10 @@
 #ifndef SENSING_H
 #define SENSING_H
 
-#include "../IMU/IMU.h"
-#include "../Blackboard/Blackboard.h"
-#include "../Lidar/VL6180X.h"
-#include "../PinDefs/PinDefs.h"
+#include "IMU/IMU.h"
+#include "../Types/Blackboard.h"
+#include "Lidar/VL6180X.h"
+#include "../Constants/PinDefs.h"
 
 #define LIDAR_FRONT 0
 #define LIDAR_LEFT 1

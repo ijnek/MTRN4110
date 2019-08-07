@@ -1,5 +1,5 @@
 #include "WayPointBehaviour.h"
-#include "../MathUtil/MathUtil.h"
+#include "../Utils/MathUtil/MathUtil.h"
 
 
 // Definitions of close when going to waypoints

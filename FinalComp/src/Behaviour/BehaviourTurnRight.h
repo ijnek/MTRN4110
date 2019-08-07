@@ -2,7 +2,7 @@
 #define BEHAVIOUR_TURN_RIGHT_H
 
 #include "BehaviourPlan.h"
-#include "../MathUtil/MathUtil.h"
+#include "../Utils/MathUtil/MathUtil.h"
 
 #define MIN_ARRIVED_TICKS 20
 

@@ -2,8 +2,8 @@
 #define BEHAVIOUR_FORWARDS_H
 
 #include "WayPointBehaviour.h"
-#include "../MathUtil/MathUtil.h"
-#include "../Constants/Constants.h"
+#include "../Utils/MathUtil/MathUtil.h"
+#include "../Constants/MazeConstants.h"
 
 // THIS IS QUITE A HACKY IMPLEMENTATION TBH, but it works
 

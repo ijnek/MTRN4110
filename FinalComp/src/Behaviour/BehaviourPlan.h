@@ -1,7 +1,7 @@
 #ifndef BEHAVIOUR_PLAN_H
 #define BEHAVIOUR_PLAN_H
 
-#include "../MovementRequest/MovementRequest.h"
+#include "../Types/MovementRequest.h"
 
 class BehaviourPlan
 {
