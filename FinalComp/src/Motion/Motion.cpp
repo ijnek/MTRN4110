@@ -1,4 +1,4 @@
-#include "Vehicle.h"
+#include "Motion.h"
 #include "Wheel.h"
 #include "../PinDefs/PinDefs.h"
 #include "Arduino.h"
@@ -11,7 +11,7 @@ Wheel wheelL(ENCODER_PIN_A_L, ENCODER_PIN_B_L, MOTOR_EN_L,
 Wheel wheelR(ENCODER_PIN_A_R, ENCODER_PIN_B_R, MOTOR_EN_R,
              MOTOR_DIR_A_R, MOTOR_DIR_B_R, false, &rightEncoderInterrupt);
 
-void Vehicle::tick()
+void Motion::tick()
 {
     // Set speed of wheels
     float leftWheelAngularPosition;  // left wheel angular position (rad)
@@ -36,7 +36,7 @@ void Vehicle::tick()
  * This is inverse kinematics
  * https://moodle.telt.unsw.edu.au/pluginfile.php/4264059/mod_resource/content/5/1_MTRN4110_Introduction_Locomotion_Perception.v20190604
  */
-void Vehicle::calculateWheelAngularPositions(
+void Motion::calculateWheelAngularPositions(
     MovementRequest &movementRequest, float &leftWheelAngularPosition, float &rightWheelAngularPosition)
 {
     float leftWheelLinearPosition = movementRequest.forwardAmount - movementRequest.turnAmount * DIST_BETWEEN_WHEELS_MM / 2.0;
@@ -62,7 +62,7 @@ static void rightEncoderInterrupt()
 }
 
 
-Odometry Vehicle::calculateOdometryDiff(int leftCounter, int rightCounter)   // calculate odometry difference since last tick
+Odometry Motion::calculateOdometryDiff(int leftCounter, int rightCounter)   // calculate odometry difference since last tick
 {
     float leftWheelDistance = leftCounter * DIST_PER_COUNT;
     float rightWheelDistance = rightCounter * DIST_PER_COUNT;

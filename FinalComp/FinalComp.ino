@@ -1,8 +1,8 @@
 #include "src/MathUtil/MathUtil.h"
 #include "src/Constants/Constants.h"
 #include "src/Blackboard/Blackboard.h"
-#include "src/Planning/Planning.h"
-#include "src/Vehicle/Vehicle.h"
+#include "src/Behaviour/Behaviour.h"
+#include "src/Motion/Motion.h"
 #include "src/Localisation/Localisation.h"
 #include "src/Sensing/Sensing.h"
 #include "src/Communication/Communication.h"
@@ -11,12 +11,12 @@
 #include <Wire.h>
 
 Blackboard blackboard;
-Communication communication(blackboard);
 Sensing sensing(blackboard);
-Exploration exploration(blackboard);
-Planning planning(blackboard);
-Vehicle vehicle(blackboard);
+// Receiver receiver(blackboard);
 Localisation localisation(blackboard);
+Exploration exploration(blackboard);
+Behaviour behaviour(blackboard);
+Motion motion(blackboard);
 LED led(blackboard);
 
 void setup() {
@@ -26,12 +26,13 @@ void setup() {
 }
 
 void loop() {
-    communication.tick();
     sensing.tick();
-    exploration.tick();
-    planning.tick();
-    vehicle.tick();
+    // receiver.tick();
     localisation.tick();
+    exploration.tick();
+    // planning.tick();
+    behaviour.tick();
+    motion.tick();
     led.tick();
 
     // Serial.print("pose: ");

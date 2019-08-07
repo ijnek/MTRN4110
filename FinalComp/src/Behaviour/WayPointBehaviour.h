@@ -1,17 +1,17 @@
-#ifndef WAY_POINT_PLAN_H
-#define WAY_POINT_PLAN_H
+#ifndef WAY_POINT_BEHAVIOUR_H
+#define WAY_POINT_BEHAVIOUR_H
 
 #include "../WayPoint/WayPoint.h"
 #include "../Vector/Vector.h"
 #include "../MovementRequest/MovementRequest.h"
-#include "Plan.h"
+#include "BehaviourPlan.h"
 
 #define MAX_WAYPOINT_COUNT 30
 
-class WayPointPlan : public Plan
+class WayPointBehaviour : public BehaviourPlan
 {
   public:
-    WayPointPlan();
+    WayPointBehaviour();
     void reset();
     void addWayPoint(WayPoint wayPoint);  // add a waypoint
     void clearWayPoints();
@@ -33,4 +33,4 @@ class WayPointPlan : public Plan
     bool headingIsCloseToFinalHeading(float currentH, float finalHeading);
 };
 
-#endif // WAY_POINT_PLAN_H
+#endif // WAY_POINT_BEHAVIOUR_H

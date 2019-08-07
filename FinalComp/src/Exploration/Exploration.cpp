@@ -276,7 +276,7 @@ void Exploration::tick()
         facingDirection = lastMove;
 
         // Finally, write it to blackboard!
-        blackboard.plan = PLAN_NEXT_WAYPOINT;
+        blackboard.plan = BEHAVIOUR_NEXT_WAYPOINT;
         float nextWayPointX = CELL_SIZE * (mapY - EXPLORATION_STARTING_Y);
         float nextWayPointY = CELL_SIZE * (mapX - EXPLORATION_STARTING_X);
         float nextWayPointH = 0;  // initialise just in case

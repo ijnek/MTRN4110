@@ -11,7 +11,7 @@
 class Blackboard
 {
   public:
-    Blackboard(): gyroZ(0), plan(PLAN_NONE), resetLocalisation(false), wallInFront(false), wallOnLeft(false), wallOnRight(false), commandCompleted(false), startDetected(false), nextMoveCommandReceived(false){}
+    Blackboard(): gyroZ(0), plan(BEHAVIOUR_NONE), resetLocalisation(false), wallInFront(false), wallOnLeft(false), wallOnRight(false), commandCompleted(false), startDetected(false), nextMoveCommandReceived(false){}
 
     Odometry odometryDiff;  // difference in odometry since last cycle
     MovementRequest movementRequest;  // current requested velocity

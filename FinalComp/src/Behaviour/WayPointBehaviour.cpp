@@ -1,4 +1,4 @@
-#include "WayPointPlan.h"
+#include "WayPointBehaviour.h"
 #include "../MathUtil/MathUtil.h"
 
 
@@ -10,13 +10,13 @@
 
 #define MIN_STAY_TICKS 20  // how many ticks to wait for once arriving at a waypoint
 
-WayPointPlan::WayPointPlan()
+WayPointBehaviour::WayPointBehaviour()
   : wayPoints(wayPointsArray)
 {
     reset();
 }
 
-void WayPointPlan::reset()
+void WayPointBehaviour::reset()
 {
     wayPointIndex = 0;
     headingClose = false;
@@ -24,23 +24,23 @@ void WayPointPlan::reset()
     closeToFinalPoseCount = 0;
 }
 
-void WayPointPlan::addWayPoint(WayPoint wayPoint)
+void WayPointBehaviour::addWayPoint(WayPoint wayPoint)
 {
     wayPoints.push_back(wayPoint);
 }
 
-void WayPointPlan::clearWayPoints()
+void WayPointBehaviour::clearWayPoints()
 {
     wayPoints.clear();
 }
 
-bool WayPointPlan::done()  // whether the way point is done or not
+bool WayPointBehaviour::done()  // whether the way point is done or not
 {
     return wayPointIndex == wayPoints.size();
 }
 
 
-MovementRequest WayPointPlan::getMovementRequest(float myX, float myY, float myH)
+MovementRequest WayPointBehaviour::getMovementRequest(float myX, float myY, float myH)
 {
     if (wayPointIndex == wayPoints.size())
     {
@@ -101,26 +101,26 @@ MovementRequest WayPointPlan::getMovementRequest(float myX, float myY, float myH
 }
 
 
-float WayPointPlan::distanceErrorSquared(float currentX, float currentY, float aimX, float aimY)
+float WayPointBehaviour::distanceErrorSquared(float currentX, float currentY, float aimX, float aimY)
 {
     float diffX = aimX - currentX;
     float diffY = aimY - currentY;
     return diffX * diffX + diffY * diffY;
 }
 
-bool WayPointPlan::distanceIsClose(float currentX, float currentY, float aimX, float aimY)
+bool WayPointBehaviour::distanceIsClose(float currentX, float currentY, float aimX, float aimY)
 {
     return distanceErrorSquared(currentX, currentY, aimX, aimY) < CLOSE_DIST_SQUARED;
 }
 
-float WayPointPlan::headingError(float currentX, float currentY, float currentH, float aimX, float aimY)
+float WayPointBehaviour::headingError(float currentX, float currentY, float currentH, float aimX, float aimY)
 {
     float diffX = aimX - currentX;
     float diffY = aimY - currentY;
     return normaliseTheta(atan2(diffY, diffX) - currentH);
 }
 
-bool WayPointPlan::headingIsClose(float currentX, float currentY, float currentH, float aimX, float aimY)
+bool WayPointBehaviour::headingIsClose(float currentX, float currentY, float currentH, float aimX, float aimY)
 {
     // Have hysteresis to prevent flickering
     if (headingClose)
@@ -133,7 +133,7 @@ bool WayPointPlan::headingIsClose(float currentX, float currentY, float currentH
     }
 }
 
-bool WayPointPlan::headingIsCloseToFinalHeading(float currentH, float finalHeading)
+bool WayPointBehaviour::headingIsCloseToFinalHeading(float currentH, float finalHeading)
 {
     if (fabs(normaliseTheta(finalHeading - currentH)) < DEG2RAD(4))
     {

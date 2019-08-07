@@ -1,12 +1,12 @@
-#ifndef PLAN_TURN_RIGHT_H
-#define PLAN_TURN_RIGHT_H
+#ifndef BEHAVIOUR_TURN_LEFT_H
+#define BEHAVIOUR_TURN_LEFT_H
 
-#include "Plan.h"
+#include "BehaviourPlan.h"
 #include "../MathUtil/MathUtil.h"
 
 #define MIN_ARRIVED_TICKS 20
 
-class PlanTurnRight : public Plan
+class BehaviourTurnLeft : public BehaviourPlan
 {
   public:
 
@@ -26,7 +26,7 @@ class PlanTurnRight : public Plan
 
         if (firstTime)
         {
-            finalHeading = normaliseTheta(myH - DEG2RAD(90));
+            finalHeading = normaliseTheta(myH + DEG2RAD(90));
             firstTime = false;
         }
 
@@ -58,4 +58,4 @@ class PlanTurnRight : public Plan
     int arrivedCounter;
 };
 
-#endif // PLAN_TURN_RIGHT_H
+#endif // BEHAVIOUR_TURN_LEFT_H

@@ -1,9 +1,9 @@
-#ifndef PLAN_H
-#define PLAN_H
+#ifndef BEHAVIOUR_PLAN_H
+#define BEHAVIOUR_PLAN_H
 
 #include "../MovementRequest/MovementRequest.h"
 
-class Plan
+class BehaviourPlan
 {
   public:
     virtual void reset() = 0; // reset, in case plan is called the second time
@@ -11,4 +11,4 @@ class Plan
     virtual MovementRequest getMovementRequest(float myX, float myY, float myH) = 0;
 };
 
-#endif // PLAN_H
+#endif // BEHAVIOUR_PLAN_H

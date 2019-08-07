@@ -30,15 +30,11 @@
 #define LEFT_MOTOR_PWM_MULTIPLIER 1.08
 #define RIGHT_MOTOR_PWM_MULTIPLIER 1.00
 
-// Bluetooth communication / Plans
-#define PLAN_NONE 0          // don't do anything
-#define PLAN1 1              // move forwards 1 block
-#define PLAN2 2              // turn, according to command given in bluetooth
-#define PLAN3 3              // move forwards 6 blocks
-#define PLAN4 4              // do the snakey course
-#define PLAN_TURN_LEFT 5     // turn left 90 degrees
-#define PLAN_TURN_RIGHT 6    // turn right 90 degrees
-#define PLAN_FORWARDS 7      // go forwards
-#define PLAN_NEXT_WAYPOINT 8 // plan using the "nextWayPoint" variable on the blackboard
+// Bluetooth communication / Behaviours
+#define BEHAVIOUR_NONE 0          // don't do anything
+#define BEHAVIOUR_TURN_LEFT 5     // turn left 90 degrees
+#define BEHAVIOUR_TURN_RIGHT 6    // turn right 90 degrees
+#define BEHAVIOUR_FORWARDS 7      // go forwards
+#define BEHAVIOUR_NEXT_WAYPOINT 8 // plan using the "nextWayPoint" variable on the blackboard
 
 #endif // CONSTANTS_H

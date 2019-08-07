@@ -1,9 +1,9 @@
-#ifndef PLAN_NONE_H
-#define PLAN_NONE_H
+#ifndef BEHAVIOUR_NONE_H
+#define BEHAVIOUR_NONE_H
 
-#include "Plan.h"
+#include "BehaviourPlan.h"
 
-class PlanNone : public Plan
+class BehaviourNone : public BehaviourPlan
 {
   public:
     void reset() {}
@@ -11,4 +11,4 @@ class PlanNone : public Plan
     MovementRequest getMovementRequest(float myX, float myY, float myH) {return MovementRequest();};  // return 0, 0 movement request
 };
 
-#endif // PLAN_NONE_H
+#endif // BEHAVIOUR_NONE_H

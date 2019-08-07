@@ -1,19 +1,19 @@
-#ifndef PLAN_FORWARDS_H
-#define PLAN_FORWARDS_H
+#ifndef BEHAVIOUR_FORWARDS_H
+#define BEHAVIOUR_FORWARDS_H
 
-#include "WayPointPlan.h"
+#include "WayPointBehaviour.h"
 #include "../MathUtil/MathUtil.h"
 #include "../Constants/Constants.h"
 
 // THIS IS QUITE A HACKY IMPLEMENTATION TBH, but it works
 
-class PlanForwards : public WayPointPlan
+class BehaviourForwards : public WayPointBehaviour
 {
   public:
 
     void reset()
     {
-        WayPointPlan::reset();
+        WayPointBehaviour::reset();
         firstTime = true;
         clearWayPoints();
         addWayPoint(WayPoint(0, 0, 0)); // add a dummy waypoint
@@ -32,7 +32,7 @@ class PlanForwards : public WayPointPlan
             firstTime = false;
         }
 
-        return WayPointPlan::getMovementRequest(myX, myY, myH);       
+        return WayPointBehaviour::getMovementRequest(myX, myY, myH);       
     }
 
   private:
@@ -40,4 +40,4 @@ class PlanForwards : public WayPointPlan
 
 };
 
-#endif // PLAN_FORWARDS_H
+#endif // BEHAVIOUR_FORWARDS_H

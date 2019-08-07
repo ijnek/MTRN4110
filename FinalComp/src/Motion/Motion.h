@@ -1,13 +1,13 @@
-#ifndef VEHICLE_HPP
-#define VEHICLE_HPP
+#ifndef MOTION_HPP
+#define MOTION_HPP
 
 #include "../MovementRequest/MovementRequest.h"
 #include "../Blackboard/Blackboard.h"
 
-class Vehicle
+class Motion
 {
   public:
-    Vehicle(Blackboard &blackboard)
+    Motion(Blackboard &blackboard)
       : blackboard(blackboard) {}
       
     void tick();
@@ -23,4 +23,4 @@ class Vehicle
 static void leftEncoderInterrupt();
 static void rightEncoderInterrupt();
 
-#endif // VEHICLE_HPP
+#endif // MOTION_HPP
