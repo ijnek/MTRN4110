@@ -60,7 +60,7 @@ void Exploration::tick()
 
         // print the updated maze (for debugging)
         // explorationMaze.printMaze(mapX, mapY, facingDirection);
-        // Serial1.print("\n\n");
+        // Serial.print("\n\n");
 
         // check if we've figured out our starting pose, depending on the updates
         if (startingPose == Unknown)
@@ -126,10 +126,15 @@ void Exploration::tick()
                         y == EXPLORATION_STARTING_Y + (MIN(ROWS, COLS) - 1) / 2)
                     {
                         blackboard.reachedGoal = true;
-                        explorationMaze.printMaze(EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
+                        // explorationMaze.printMaze(EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
+                        //                          EXPLORATION_STARTING_Y, EXPLORATION_STARTING_X,
+                        //                          EXPLORATION_STARTING_Y + (COLS - 1), EXPLORATION_STARTING_X + (ROWS - 1));
+                        String hAndVWall = explorationMaze.encodeHAndVWall(
+                                                 EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
                                                  EXPLORATION_STARTING_Y, EXPLORATION_STARTING_X,
                                                  EXPLORATION_STARTING_Y + (COLS - 1), EXPLORATION_STARTING_X + (ROWS - 1));
-                        Serial1.print("\n\n");
+                        String position = "S001";
+                        blackboard.encodedMaze = position + hAndVWall;
                     }
                     break;
                 }
@@ -139,10 +144,15 @@ void Exploration::tick()
                         y == EXPLORATION_STARTING_Y + (MAX(ROWS, COLS) - 1) / 2)
                     {
                         blackboard.reachedGoal = true;
-                        explorationMaze.printMaze(EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
+                        // explorationMaze.printMaze(EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
+                        //                           EXPLORATION_STARTING_Y, EXPLORATION_STARTING_X - (COLS - 1),
+                        //                           EXPLORATION_STARTING_Y + (ROWS - 1), EXPLORATION_STARTING_X);
+                        String hAndVWall = explorationMaze.encodeHAndVWall(
+                                                  EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
                                                   EXPLORATION_STARTING_Y, EXPLORATION_STARTING_X - (COLS - 1),
                                                   EXPLORATION_STARTING_Y + (ROWS - 1), EXPLORATION_STARTING_X);
-                        Serial1.print("\n\n");
+                        String position = "S041";
+                        blackboard.encodedMaze = position + hAndVWall;
                     }
                     break;
                 }
@@ -152,24 +162,34 @@ void Exploration::tick()
                         y == EXPLORATION_STARTING_Y + (MAX(ROWS, COLS) - 1) / 2)
                     {
                         blackboard.reachedGoal = true;
-                        explorationMaze.printMaze(EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
+                        // explorationMaze.printMaze(EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
+                        //                           EXPLORATION_STARTING_Y, EXPLORATION_STARTING_X,
+                        //                           EXPLORATION_STARTING_Y + (ROWS - 1), EXPLORATION_STARTING_X + (COLS - 1));
+                        String hAndVWall = explorationMaze.encodeHAndVWall(EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
                                                   EXPLORATION_STARTING_Y, EXPLORATION_STARTING_X,
                                                   EXPLORATION_STARTING_Y + (ROWS - 1), EXPLORATION_STARTING_X + (COLS - 1));
-                        Serial1.print("\n\n");                                                  
+                        String position = "S001";
+                        blackboard.encodedMaze = position + hAndVWall;
                     }
                     break;
                 }
                 case(RightTopFacingDown):
+                {
                     if (x == EXPLORATION_STARTING_X - (MAX(ROWS, COLS) - 1) / 2 &&
                         y == EXPLORATION_STARTING_Y + (MIN(ROWS, COLS) - 1) / 2)
                     {
                         blackboard.reachedGoal = true;
-                        explorationMaze.printMaze(EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
-                                                  EXPLORATION_STARTING_X - ROWS + 1, EXPLORATION_STARTING_Y,
-                                                  EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y + COLS);
-                        Serial1.print("\n\n");                                                  
+                        // explorationMaze.printMaze(EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
+                        //                           EXPLORATION_STARTING_Y, EXPLORATION_STARTING_X - ROWS + 1,
+                        //                           EXPLORATION_STARTING_Y + COLS - 1, EXPLORATION_STARTING_X);
+                        String hAndVWall = explorationMaze.encodeHAndVWall(EXPLORATION_STARTING_X, EXPLORATION_STARTING_Y, EXPLORATION_STARTING_FACING_DIRECTION,
+                                                  EXPLORATION_STARTING_Y, EXPLORATION_STARTING_X - ROWS + 1,
+                                                  EXPLORATION_STARTING_Y + COLS - 1, EXPLORATION_STARTING_X);
+                        String position = "S081";
+                        blackboard.encodedMaze = position + hAndVWall;
                     }
                     break;
+                }
                 default:
                 {
                 }

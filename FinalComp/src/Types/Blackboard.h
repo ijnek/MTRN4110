@@ -11,7 +11,7 @@
 class Blackboard
 {
   public:
-    Blackboard(): gyroZ(0), plan(BEHAVIOUR_NONE), resetLocalisation(false), wallInFront(false), wallOnLeft(false), wallOnRight(false), commandCompleted(false), startDetected(false), nextMoveCommandReceived(false){}
+    Blackboard(): gyroZ(0), plan(BEHAVIOUR_NONE), resetLocalisation(false), wallInFront(false), wallOnLeft(false), wallOnRight(false), commandCompleted(false), startDetected(true), nextMoveCommandReceived(false){}
 
     Odometry odometryDiff;  // difference in odometry since last cycle
     MovementRequest movementRequest;  // current requested velocity
@@ -28,6 +28,10 @@ class Blackboard
     bool reachedGoal;  // whether we have reached the goal or not   
     bool startDetected;  // whether we have detected the start signal 
     bool nextMoveCommandReceived;  // whether we have received the next move command through bluetooth
+    float lidarLeft;  // distance of front lidar obstacle
+    float lidarFront;  // distance of left lidar obstacle
+    float lidarRight;  // distance of right lidar obstacle
+    String encodedMaze;  // string that gets transmitted from vision or exploration to planning
 };
 
 #endif // BLACKBOARD_H

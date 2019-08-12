@@ -25,8 +25,6 @@ class BehaviourForwards : public WayPointBehaviour
         {
             float finalX = myX + CELL_SIZE * cos(myH);
             float finalY = myY + CELL_SIZE * sin(myH);
-            Serial.println(finalX);
-            Serial.println(finalY);
             clearWayPoints();
             addWayPoint(WayPoint(finalX, finalY, myH));
             firstTime = false;
