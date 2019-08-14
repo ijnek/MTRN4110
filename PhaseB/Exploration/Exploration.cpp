@@ -180,8 +180,113 @@ void Exploration::tick()
     // Choose what move to make
     if (!possibleMoveDirections.empty())
     {
+        int goalX;
+        int goalY;
+
         // we're exploring a new route!
-        lastMove = possibleMoveDirections[0];
+        switch(blackboard.startingPose)
+        {
+            case LeftTopFacingRight:
+            {
+                goalX = 6;
+                goalY = 4;
+                break;                
+            }
+            case LeftTopFacingDown:
+            {
+                goalX = 12;
+                goalY = 2;
+                break;
+            }
+            case RightTopFacingLeft:
+            {
+                goalX = 10;
+                goalY = 4;
+                break;
+            }
+            case RightTopFacingDown:
+            {
+                goalX = 4;
+                goalY = 2;
+                break;
+            }
+            case Unknown:
+            {
+                // minimise goalX;
+                goalX = -1;
+                goalY = 4;
+                break;
+            }
+        }
+
+        int min_index = 0;
+        int min_val = 9999;
+
+        // PRINT("StartingPose: ");
+        // PRINT(blackboard.startingPose);
+        // PRINT("\n");
+
+        for (unsigned i = 0; i < possibleMoveDirections.size(); ++i)
+        {
+            int val = 0;
+            int nextX = blackboard.x;
+            int nextY = blackboard.y;
+            
+            switch(possibleMoveDirections[i])
+            {
+                case NORTH:
+                {
+                    nextY -= 1;
+                    break;
+                }
+                case SOUTH:
+                {
+                    nextY += 1;
+                    break;
+                }
+                case EAST:
+                {
+                    nextX += 1;
+                    break;
+                }
+                case WEST:
+                {
+                    nextX -= 1;
+                    break;
+                }
+            }
+
+            // PRINT("goalX: ");
+            // PRINT(goalX);
+            // PRINT("\n");
+            // PRINT("goalY: ");
+            // PRINT(goalY);
+            // PRINT("\n");
+            
+            if (goalX > 0)
+            {
+                val += abs(nextX - goalX);
+            }
+            if (goalY > 0)
+            {
+                val += abs(nextY - goalY);
+            }
+
+            if (val < min_val)
+            {
+                min_index = i;
+                min_val = val;
+            }
+
+            // PRINT("Direction: ");
+            // PRINT(possibleMoveDirections[i]);
+            // PRINT("\n");
+            // PRINT("val: ");
+            // PRINT(val);
+            // PRINT("\n");
+        }
+
+        lastMove = possibleMoveDirections[min_index];
 
         // add how we can get back to the backTrackMoves
         switch(lastMove)
@@ -216,24 +321,28 @@ void Exploration::tick()
             lastMove = NONE;
     }
 
-    // in simulation, we move the robot here
-    switch(lastMove)
+    if (!blackboard.reachedGoal)
     {
-        case(NORTH):
-            blackboard.y -= 1;
-            break;
-        case(SOUTH):
-            blackboard.y += 1;
 
-            break;
-        case(EAST):
-            blackboard.x += 1;
-            break;
-        case(WEST):
-            blackboard.x -= 1;
-            break;   
-        default:
-            break;
+        // in simulation, we move the robot here
+        switch(lastMove)
+        {
+            case(NORTH):
+                blackboard.y -= 1;
+                break;
+            case(SOUTH):
+                blackboard.y += 1;
+
+                break;
+            case(EAST):
+                blackboard.x += 1;
+                break;
+            case(WEST):
+                blackboard.x -= 1;
+                break;   
+            default:
+                break;
+        }
+        blackboard.facingDirection = lastMove;
     }
-    blackboard.facingDirection = lastMove;
 }
