@@ -21,7 +21,7 @@
 #define LIDAR_FRONT_SHDN 23
 
 // Define the pins for the leds
-#define LED_RED_DIGITAL_PIN 41
-#define LED_GREEN_DIGITAL_PIN 43
+#define LED_RED_DIGITAL_PIN 43
+#define LED_GREEN_DIGITAL_PIN 41
 
 #endif // PIN_DEFS_HPP
