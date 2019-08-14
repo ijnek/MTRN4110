@@ -35,18 +35,31 @@ void Wheel::tick()
     unsigned long time = millis();
     if (time - lastTime > PID_SAMPLING_PERIOD_MS)
     {
-        int result = pid.compute(setPointCounts, counts);
+        // Serial.print(counts);
+        // Serial.print(", ");
+        // Serial.print(time);
+        // Serial.print(", ");
+        // Serial.print(lastTime);
+        // Serial.println(", ");
+        int result = pid.compute(setPointCounts, counts / ((time - lastTime)/1000.0));
         counts = 0; //Count clear, wait for the next count
         setDirectionToForwards(result > 0 ? true : false);  // set the directon of the motor
 
+        // Serial.print("result: ");
+        // Serial.println(result);
+
         // Modify value by multiplying it, to achieve similar results in left and right motor
-        if (isLeftWheel)
-            result *= LEFT_MOTOR_PWM_MULTIPLIER;
-        else
-            result *= RIGHT_MOTOR_PWM_MULTIPLIER;
+        // if (isLeftWheel)
+        //     result *= LEFT_MOTOR_PWM_MULTIPLIER;
+        // else
+        //     result *= RIGHT_MOTOR_PWM_MULTIPLIER;
         writeSpeedByUint8_t(abs(result));
 
         lastTime = time; // update lasttime pid was updated
+    }
+    else
+    {
+        // Serial.println("pid not updated");
     }
 }
 
@@ -55,9 +68,14 @@ void Wheel::writeSpeedByUint8_t(uint8_t speed) // set speed directly by uint8_t
     analogWrite(motorEn, speed);
 }
 
-void Wheel::setAngularPosition(float angularPosition) // set angular position of wheel (rad)
+// void Wheel::setAngularPosition(float angularPosition) // set angular position of wheel (rad)
+// {
+//     setPointCounts = angularPosition * ENCODER_COUNTS_PER_REV / RAD_PER_REV;
+// }
+
+void Wheel::setAngularVelocity(float angularVelocity)  // set angular velocity of wheel (rad/s)
 {
-    setPointCounts = angularPosition * ENCODER_COUNTS_PER_REV / RAD_PER_REV;
+    setPointCounts = angularVelocity  * ENCODER_COUNTS_PER_REV / RAD_PER_REV;
 }
 
 void Wheel::setDirectionToForwards(bool forwards)

@@ -16,6 +16,7 @@ class Wheel
     void encoderInterrupt();
     int getAndResetCounterForOdometry();
     void setAngularPosition(float angularPosition);  // set angular position, from start of run (rad)
+    void setAngularVelocity(float angularVelocity);  // set angular velocity, from start of run (rad/s)
 
 private:
     bool encoderDetectingForwardsRotation;

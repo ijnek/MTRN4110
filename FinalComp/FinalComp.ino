@@ -27,14 +27,14 @@ void setup() {
 }
 
 void loop() {
-    sensing.tick();
+    // sensing.tick();
     // receiver.tick();
-    localisation.tick();
-    exploration.tick();
+    // localisation.tick();
+    // exploration.tick();
     // planning.tick();
-    behaviour.tick();
+    // behaviour.tick();
     motion.tick();
-    led.tick();
+    // led.tick();
 
     // String out = "pose: " + String(blackboard.worldPose.x) + ", " + String(blackboard.worldPose.y) + ", " + RAD2DEG(blackboard.worldPose.theta);
     String out = String(blackboard.worldPose.x) + ", " + String(blackboard.worldPose.y) + ", " + RAD2DEG(blackboard.worldPose.theta);

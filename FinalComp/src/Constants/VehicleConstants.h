@@ -14,10 +14,10 @@
 
 // PID Controller for motor
 #define PID_SAMPLING_PERIOD_MS 50 // duration we sample the velocity of the encoder over (ms)
-#define MOTOR_K_P 4.50
+#define MOTOR_K_P 0.50
 #define MOTOR_K_I 0.00
-#define MOTOR_K_D 8.00
-#define MAX_MOTOR_PWM_OUTPUT 80 // Maximum output pwm value of a motor, increase to go faster, lower to go slower
+#define MOTOR_K_D 1.00
+#define MAX_MOTOR_PWM_OUTPUT 255 // Maximum output pwm value of a motor, increase to go faster, lower to go slower
 
 // Some multipliers to make odometry estimate position better
 #define ODOMETRY_FORWARD_MULTIPLIER 1.05

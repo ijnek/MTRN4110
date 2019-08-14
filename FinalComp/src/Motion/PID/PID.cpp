@@ -12,6 +12,13 @@ int PID::compute(float target, float current)
     float currentError = target - current;
     cumulativeError += currentError;
 
+    // Serial.print("target: ");
+    // Serial.println(target);
+    // Serial.print("current: ");
+    // Serial.println(current);
+    // Serial.print("currentError: ");
+    // Serial.println(currentError);
+
     float output = 
         Kp * currentError +
         Ki * cumulativeError +
