@@ -14,15 +14,12 @@ Wheel wheelR(ENCODER_PIN_A_R, ENCODER_PIN_B_R, MOTOR_EN_R,
 void Motion::tick()
 {
     // Set speed of wheels
-    // float leftWheelAngularPosition;  // left wheel angular position (rad)
-    // float rightWheelAngularPosition;  // right wheel angular position (rad)
+    float leftWheelAngularPosition;  // left wheel angular position (rad)
+    float rightWheelAngularPosition;  // right wheel angular position (rad)
 
-    // calculateWheelAngularPositions(blackboard.movementRequest, leftWheelAngularPosition, rightWheelAngularPosition);
-    // wheelL.setAngularPosition(leftWheelAngularPosition);
-    // wheelR.setAngularPosition(rightWheelAngularPosition);
-
-    wheelL.setAngularVelocity(DEG2RAD(180));
-    wheelR.setAngularVelocity(DEG2RAD(180));
+    calculateWheelAngularPositions(blackboard.movementRequest, leftWheelAngularPosition, rightWheelAngularPosition);
+    wheelL.setAngularPosition(leftWheelAngularPosition);
+    wheelR.setAngularPosition(rightWheelAngularPosition);
 
     // Tick the wheels
     wheelL.tick();
