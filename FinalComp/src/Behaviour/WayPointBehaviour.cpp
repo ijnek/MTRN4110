@@ -3,8 +3,10 @@
 
 
 // Definitions of close when going to waypoints
-#define CLOSE_DIST 30  // mm
+#define CLOSE_DIST 60  // mm
 #define CLOSE_DIST_SQUARED CLOSE_DIST*CLOSE_DIST  // mm^2
+#define NOT_CLOSE_DIST 30  // mm
+#define NOT_CLOSE_DIST_SQUARED CLOSE_DIST*CLOSE_DIST  // mm^2
 #define CLOSE_HEADING DEG2RAD(5)  // rad
 #define NOT_CLOSE_HEADING DEG2RAD(10)  // rad
 
@@ -20,6 +22,7 @@ void WayPointBehaviour::reset()
 {
     wayPointIndex = 0;
     headingClose = false;
+    distanceClose = false;
     arrivedCount = 0;
     closeToFinalPoseCount = 0;
 }
@@ -70,6 +73,7 @@ MovementRequest WayPointBehaviour::getMovementRequest(float myX, float myY, floa
             turnAmount = normaliseTheta(aimH - myH);
             closeToFinalPoseCount = 0;
         }
+        distanceClose = true;
     }
     else
     {
@@ -88,6 +92,7 @@ MovementRequest WayPointBehaviour::getMovementRequest(float myX, float myY, floa
             turnAmount = headingError(myX, myY, myH, aimX, aimY);
             headingClose = false;
         }
+        distanceClose = false;
     }
 
     // If we're close to the current way point, let's go to next one!
@@ -110,7 +115,14 @@ float WayPointBehaviour::distanceErrorSquared(float currentX, float currentY, fl
 
 bool WayPointBehaviour::distanceIsClose(float currentX, float currentY, float aimX, float aimY)
 {
-    return distanceErrorSquared(currentX, currentY, aimX, aimY) < CLOSE_DIST_SQUARED;
+    if (distanceClose)
+    {
+        return distanceErrorSquared(currentX, currentY, aimX, aimY) < NOT_CLOSE_DIST_SQUARED;
+    }
+    else
+    {
+        return distanceErrorSquared(currentX, currentY, aimX, aimY) < CLOSE_DIST_SQUARED;
+    }
 }
 
 float WayPointBehaviour::headingError(float currentX, float currentY, float currentH, float aimX, float aimY)

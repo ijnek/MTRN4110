@@ -23,6 +23,7 @@ class WayPointBehaviour : public BehaviourPlan
     Vector<WayPoint> wayPoints;
     int wayPointIndex;
     bool headingClose;  // whether our heading is close, used for hysteresis purpose
+    bool distanceClose;  // whether our heading is close, used for hysteresis purpose
     int closeToFinalPoseCount;  // whether our heading is close to final heading, used for hysteresis purpose
     int arrivedCount;
 
