@@ -25,11 +25,6 @@ public:
 
   void reset()
   {
-    // Make some references, for ease of access
-    VL6180X &lidarFront = lidars[LIDAR_FRONT];
-    VL6180X &lidarLeft = lidars[LIDAR_LEFT];
-    VL6180X &lidarRight = lidars[LIDAR_RIGHT];
-
     // set up enables
     pinMode(LIDAR_LEFT_SHDN, OUTPUT);
     pinMode(LIDAR_RIGHT_SHDN, OUTPUT);
@@ -40,6 +35,19 @@ public:
     delay(1000);
 
     // set up first sensor
+    resetLeftLidar();
+
+    // set up the second LiDAR sensor, on right side
+    resetRightLidar();
+
+    // set up the third LiDAR sensor, on front side
+    resetFrontLidar();
+
+  }
+
+  void resetLeftLidar()
+  {
+    VL6180X &lidarLeft = lidars[LIDAR_LEFT];
     // left lidar, connect to pin 22
     digitalWrite(LIDAR_LEFT_SHDN, HIGH);
     delay(50);
@@ -48,29 +56,17 @@ public:
     lidarLeft.setAddress(0x30); // change to new address
     lidarLeft.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 30);
     lidarLeft.writeReg16Bit(VL6180X::SYSALS__INTEGRATION_PERIOD, 50);
-    lidarLeft.setTimeout(500);
+    lidarLeft.setTimeout(200);
     lidarLeft.stopContinuous();
     lidarLeft.setScaling(1); // configure range or precision 1, 2 oder 3 mm
     delay(300);
     lidarLeft.startInterleavedContinuous(100);
-    delay(100);
+    delay(100);  
+  }
 
-    // set up the second LiDAR sensor, on right side
-    digitalWrite(LIDAR_RIGHT_SHDN, HIGH);
-    delay(50);
-    lidarRight.init();
-    lidarRight.configureDefault();
-    lidarRight.setAddress(0x31); // change to new address
-    lidarRight.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 30);
-    lidarRight.writeReg16Bit(VL6180X::SYSALS__INTEGRATION_PERIOD, 50);
-    lidarRight.setTimeout(500);
-    lidarRight.stopContinuous();
-    lidarRight.setScaling(1); // configure range or precision 1, 2 oder 3 mm
-    delay(300);
-    lidarRight.startInterleavedContinuous(100);
-    delay(100);
-
-    // set up the third LiDAR sensor, on front side
+  void resetFrontLidar()
+  {
+    VL6180X &lidarFront = lidars[LIDAR_FRONT];
     digitalWrite(LIDAR_FRONT_SHDN, HIGH);
     delay(50);
     lidarFront.init();
@@ -78,12 +74,32 @@ public:
     lidarFront.setAddress(0x32); // change to new address
     lidarFront.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 30);
     lidarFront.writeReg16Bit(VL6180X::SYSALS__INTEGRATION_PERIOD, 50);
-    lidarFront.setTimeout(500);
+    lidarFront.setTimeout(200);
     lidarFront.stopContinuous();
     lidarFront.setScaling(1); // configure range or precision 1, 2 oder 3 mm
     delay(300);
     lidarFront.startInterleavedContinuous(100);
+    delay(100);    
+
+  }
+
+  void resetRightLidar()
+  {
+    VL6180X &lidarRight = lidars[LIDAR_RIGHT];
+    digitalWrite(LIDAR_RIGHT_SHDN, HIGH);
+    delay(50);
+    lidarRight.init();
+    lidarRight.configureDefault();
+    lidarRight.setAddress(0x31); // change to new address
+    lidarRight.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 30);
+    lidarRight.writeReg16Bit(VL6180X::SYSALS__INTEGRATION_PERIOD, 50);
+    lidarRight.setTimeout(200);
+    lidarRight.stopContinuous();
+    lidarRight.setScaling(1); // configure range or precision 1, 2 oder 3 mm
+    delay(300);
+    lidarRight.startInterleavedContinuous(100);
     delay(100);
+
   }
 
   void tick()
@@ -98,9 +114,29 @@ public:
     blackboard.lidarLeft = lidars[LIDAR_LEFT].readRangeSingleMillimeters();
     blackboard.lidarRight = lidars[LIDAR_RIGHT].readRangeSingleMillimeters();
 
-    // Serial.println("lidars: ");
-    // Serial.println(blackboard.lidarFront);
-    // Serial.println(blackboard.lidarLeft);
+    // check if timeouts occured, this happened randomly for mysterious reasons, but
+    // resetting the lidars fixed it
+    if (lidars[LIDAR_FRONT].timeoutOccurred())
+    {
+      resetFrontLidar();
+      Serial.println("FRONT TIMEOUT");
+    }
+    if (lidars[LIDAR_LEFT].timeoutOccurred())
+    {
+      resetLeftLidar();
+      Serial.println("LEFT TIMEOUT");
+    }
+    if (lidars[LIDAR_RIGHT].timeoutOccurred())
+    {
+      resetRightLidar();
+      Serial.println("RIGHT TIMEOUT");
+    }
+
+    // Serial.print("lidars: ");
+    // Serial.print(blackboard.lidarLeft);
+    // Serial.print(", ");
+    // Serial.print(blackboard.lidarFront);
+    // Serial.print(", ");
     // Serial.println(blackboard.lidarRight);
 
     if (!blackboard.startDetected)

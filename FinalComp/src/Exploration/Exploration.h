@@ -18,7 +18,9 @@ class Exploration
         mapX(EXPLORATION_STARTING_X),
         mapY(EXPLORATION_STARTING_Y),
         facingDirection(EXPLORATION_STARTING_FACING_DIRECTION),
-        startingPose(Unknown)
+        startingPose(Unknown),
+        prevMapX(mapX),
+        prevMapY(mapY)
     {
     }
     void tick();
@@ -31,6 +33,9 @@ class Exploration
     int mapY;
     Direction facingDirection;
     StartingPose startingPose;
+
+    int prevMapX;
+    int prevMapY;
 };
 
 #endif // EXPLORATION_H

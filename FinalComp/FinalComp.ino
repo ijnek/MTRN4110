@@ -34,12 +34,16 @@ void loop() {
     // planning.tick();
     behaviour.tick();
     motion.tick();
-    // led.tick();
+    led.tick();
 
-    // Serial.print("pose: ");
-    // Serial.print(blackboard.worldPose.x);
-    // Serial.print(", ");
-    // Serial.print(blackboard.worldPose.y);
+    // String out = "pose: " + String(blackboard.worldPose.x) + ", " + String(blackboard.worldPose.y) + ", " + RAD2DEG(blackboard.worldPose.theta);
+    String out = String(blackboard.worldPose.x) + ", " + String(blackboard.worldPose.y) + ", " + RAD2DEG(blackboard.worldPose.theta);
+    // Serial1.println(out);
+
+    // Serial1.print("pose: ");
+    // Serial1.print(blackboard.worldPose.x);
+    // Serial1.print(", ");
+    // Serial1.print(blackboard.worldPose.y);
     // Serial.print(", ");
     // Serial.println(RAD2DEG(blackboard.worldPose.theta));
 }

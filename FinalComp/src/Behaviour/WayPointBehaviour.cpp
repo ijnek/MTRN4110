@@ -5,10 +5,10 @@
 // Definitions of close when going to waypoints
 #define CLOSE_DIST 30  // mm
 #define CLOSE_DIST_SQUARED CLOSE_DIST*CLOSE_DIST  // mm^2
-#define CLOSE_HEADING DEG2RAD(2)  // rad
-#define NOT_CLOSE_HEADING DEG2RAD(6)  // rad
+#define CLOSE_HEADING DEG2RAD(5)  // rad
+#define NOT_CLOSE_HEADING DEG2RAD(10)  // rad
 
-#define MIN_STAY_TICKS 20  // how many ticks to wait for once arriving at a waypoint
+#define MIN_STAY_TICKS 2  // how many ticks to wait for once arriving at a waypoint
 
 WayPointBehaviour::WayPointBehaviour()
   : wayPoints(wayPointsArray)

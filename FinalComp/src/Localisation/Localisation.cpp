@@ -2,20 +2,20 @@
 #include "../Constants/VehicleConstants.h"
 #include "../Utils/MathUtil/MathUtil.h"
 
-#define INITIAL_UNCERTAINTY_X 30.0  // mm
-#define INITIAL_UNCERTAINTY_Y 30.0  // mm
+#define INITIAL_UNCERTAINTY_X 50.0  // mm
+#define INITIAL_UNCERTAINTY_Y 50.0  // mm
 #define INITIAL_UNCERTAINTY_H DEG2RAD(10)  // rad
 
 #define LIDAR_LEFT_X 65.0  // mm
-#define LIDAR_LEFT_Y 45.0  //  mm
+#define LIDAR_LEFT_Y 80.0  //  mm
 #define LIDAR_LEFT_H DEG2RAD(90)  // rad
 
 #define LIDAR_RIGHT_X 65.0  // mm
-#define LIDAR_RIGHT_Y -45.0  // mm
+#define LIDAR_RIGHT_Y -70.0  // mm
 #define LIDAR_RIGHT_H DEG2RAD(-90)  // rad
 
-#define LIDAR_FRONT_X 70.0  // mm
-#define LIDAR_FRONT_Y 0.0  // mm
+#define LIDAR_FRONT_X 80.0  // mm
+#define LIDAR_FRONT_Y -35.0  // mm
 #define LIDAR_FRONT_H 0.0  // rad
 
 #define LIDAR_UNCERTAINTY 40  // mm
@@ -23,7 +23,7 @@
 #define CELL_SIZE 250.0  // mm
 
 #define ODOMETRY_FORWARD_MULTIPLY_FACTOR 2.0
-#define ODOMETRY_TURN_PROCESS_VARIANCE DEG2RAD(5) * DEG2RAD(5)
+#define ODOMETRY_TURN_PROCESS_VARIANCE DEG2RAD(2) * DEG2RAD(2)
 
 
 // static int dataRowIndex = 0;
@@ -61,51 +61,67 @@ void Localisation::reset()
 
 void Localisation::tick()
 {
-    if (blackboard.resetLocalisation)
-        reset();
+    if (blackboard.startDetected)
+    {
 
-    blackboard.resetLocalisation = false;  // reset flag
+        if (blackboard.resetLocalisation)
+            reset();
 
-    float forwardChange = blackboard.odometryDiff.forward;
-    float turnChange = blackboard.odometryDiff.turn;
-    float lidarFront = blackboard.lidarFront;
-    float lidarLeft = blackboard.lidarLeft;
-    float lidarRight = blackboard.lidarRight;
+        blackboard.resetLocalisation = false;  // reset flag
 
-    // uncomment if simulating
-    // float forwardChange = data[dataRowIndex][1];
-    // float turnChange = data[dataRowIndex][2];
-    // float lidarFront = data[dataRowIndex][3];
-    // float lidarLeft = data[dataRowIndex][4];
-    // float lidarRight = data[dataRowIndex][5];
-    // dataRowIndex++;
+        float forwardChange = blackboard.odometryDiff.forward;
+        float turnChange = blackboard.odometryDiff.turn;
+        float lidarFront = blackboard.lidarFront;
+        float lidarLeft = blackboard.lidarLeft;
+        float lidarRight = blackboard.lidarRight;
 
-    predict(forwardChange, turnChange);
+        // uncomment if simulating
+        // float forwardChange = data[dataRowIndex][1];
+        // float turnChange = data[dataRowIndex][2];
+        // float lidarFront = data[dataRowIndex][3];
+        // float lidarLeft = data[dataRowIndex][4];
+        // float lidarRight = data[dataRowIndex][5];
+        // dataRowIndex++;
 
-    // Serial.println("Left");
-    updateWithLidar(LIDAR_LEFT_X, LIDAR_LEFT_Y, LIDAR_LEFT_H, lidarLeft);
-    // Serial.println("Front");
-    updateWithLidar(LIDAR_FRONT_X, LIDAR_FRONT_Y, LIDAR_FRONT_H, lidarFront);
-    // Serial.println("Right");
-    updateWithLidar(LIDAR_RIGHT_X, LIDAR_RIGHT_Y, LIDAR_RIGHT_H, lidarRight);
+        predict(forwardChange, turnChange);
 
-    // Serial.print(state[0]);
-    // Serial.print(", ");
-    // Serial.print(state[1]);
-    // Serial.print(", ");
-    // Serial.print(state[2]);
-    // Serial.print(", ");
+        // Only do updates if we think we're facing one of the four directions
+        if (abs(state[2]) < DEG2RAD(10) ||
+            abs(state[2] - DEG2RAD(90)) < DEG2RAD(10) || 
+            abs(state[2] + DEG2RAD(90)) < DEG2RAD(10) || 
+            abs(normaliseTheta(state[2] + DEG2RAD(180))) < DEG2RAD(10))
+        {
+            // Serial1.print("Left: ");
+            // Serial1.println(lidarLeft);
+            updateWithLidar(LIDAR_LEFT_X, LIDAR_LEFT_Y, LIDAR_LEFT_H, lidarLeft);
+            // Serial1.println("Front");
+            // Serial1.print("Front: ");
+            // Serial1.println(lidarFront);
+            updateWithLidar(LIDAR_FRONT_X, LIDAR_FRONT_Y, LIDAR_FRONT_H, lidarFront);
+            // // Serial1.println("Right");
+            // Serial1.print("Right: ");
+            // Serial1.println(lidarRight);
+            updateWithLidar(LIDAR_RIGHT_X, LIDAR_RIGHT_Y, LIDAR_RIGHT_H, lidarRight);
+        }
+    }
 
-    // for (unsigned i = 0; i < 3; ++i)
-    // {
-    //     for (unsigned j = 0; j < 3; ++j)
-    //     {
-    //         Serial.print(covariance[i][j]);
-    //         if (i != 2 || j != 2)
-    //             Serial.print(", ");
-    //     }
-    // }
-    // Serial.print("\n");
+    Serial1.print(state[0]);
+    Serial1.print(", ");
+    Serial1.print(state[1]);
+    Serial1.print(", ");
+    Serial1.print(state[2]);
+    Serial1.print(", ");
+
+    for (unsigned i = 0; i < 3; ++i)
+    {
+        for (unsigned j = 0; j < 3; ++j)
+        {
+            Serial1.print(covariance[i][j]);
+            if (i != 2 || j != 2)
+                Serial1.print(", ");
+        }
+    }
+    Serial1.print("\n");
 
     blackboard.worldPose = Pose(state[0], state[1], state[2]);
 }
@@ -187,14 +203,14 @@ void Localisation::updateWithLidar(float lidarX, float lidarY, float lidarH, flo
 
     float angleLidar = normaliseTheta(state[2] + lidarH);
 
-    // Serial.print("angleLidar: ");
-    // Serial.println(angleLidar);
+    // Serial1.print("angleLidar: ");
+    // Serial1.println(angleLidar);
 
     float sinHeadingPlusLidarH = sinf(state[2] + lidarH);
     float cosHeadingPlusLidarH = cosf(state[2] + lidarH);
 
-    // Serial.print("sinHeadingPlusLidarH: ");
-    // Serial.println(sinHeadingPlusLidarH);
+    // Serial1.print("sinHeadingPlusLidarH: ");
+    // Serial1.println(sinHeadingPlusLidarH);
 
     mtx_type innovationVector[1][1];
     mtx_type jacobian[1][3];
@@ -212,19 +228,19 @@ void Localisation::updateWithLidar(float lidarX, float lidarY, float lidarH, flo
         jacobian[0][1] = 0.0;
         jacobian[0][2] = (lidarY * cosHeading + lidarX * sinHeading) / cosHeadingPlusLidarH + (sinHeadingPlusLidarH * (closestWallX - state[0] - lidarX * cosHeading + lidarY * sinHeading)) / (cosHeadingPlusLidarH * cosHeadingPlusLidarH);
 
-        // Serial.print("state before: \n"); 
+        // Serial1.print("state before: \n"); 
         // Matrix.Print((mtx_type*) state, 3, 1, "");
-        // Serial.print("covariance before: \n"); 
+        // Serial1.print("covariance before: \n"); 
         // Matrix.Print((mtx_type*) covariance, 3, 3, "");
-        // Serial.print("closestWallX: \n"); 
-        // Serial.println(closestWallX);
-        // Serial.print("lidarGlobalX: \n"); 
-        // Serial.println(lidarGlobalX);
-        // Serial.print("expectedDistance: \n"); 
-        // Serial.println(expectedDistance);
-        // Serial.print("innovationVector: \n"); 
+        // Serial1.print("closestWallX: \n"); 
+        // Serial1.println(closestWallX);
+        // Serial1.print("lidarGlobalX: \n"); 
+        // Serial1.println(lidarGlobalX);
+        // Serial1.print("expectedDistance: \n"); 
+        // Serial1.println(expectedDistance);
+        // Serial1.print("innovationVector: \n"); 
         // Matrix.Print((mtx_type*) innovationVector, 1, 1, "");
-        // Serial.print("jacobian: \n"); 
+        // Serial1.print("jacobian: \n"); 
         // Matrix.Print((mtx_type*) jacobian, 1, 3, "");
     }
     else if (fabs(normaliseTheta(angleLidar - DEG2RAD(90))) < DEG2RAD(20) ||
@@ -239,19 +255,19 @@ void Localisation::updateWithLidar(float lidarX, float lidarY, float lidarH, flo
         jacobian[0][1] = -1.0 / sinHeadingPlusLidarH;
         jacobian[0][2] = (cosHeadingPlusLidarH * (state[1] - closestWallY + lidarY * cosHeading + lidarX * sinHeading))/(sinHeadingPlusLidarH * sinHeadingPlusLidarH) - (lidarX * cosHeading - lidarY * sinHeading) / sinHeadingPlusLidarH;
 
-        // Serial.print("state before: \n"); 
+        // Serial1.print("state before: \n"); 
         // Matrix.Print((mtx_type*) state, 3, 1, "");
-        // Serial.print("covariance before: \n"); 
+        // Serial1.print("covariance before: \n"); 
         // Matrix.Print((mtx_type*) covariance, 3, 3, "");
-        // Serial.print("closestWallY: \n"); 
-        // Serial.println(closestWallY);
-        // Serial.print("lidarGlobalY: \n"); 
-        // Serial.println(lidarGlobalY);
-        // Serial.print("expectedDistance: \n"); 
-        // Serial.println(expectedDistance);
-        // Serial.print("innovationVector: \n"); 
+        // Serial1.print("closestWallY: \n"); 
+        // Serial1.println(closestWallY);
+        // Serial1.print("lidarGlobalY: \n"); 
+        // Serial1.println(lidarGlobalY);
+        // Serial1.print("expectedDistance: \n"); 
+        // Serial1.println(expectedDistance);
+        // Serial1.print("innovationVector: \n"); 
         // Matrix.Print((mtx_type*) innovationVector, 1, 1, "");
-        // Serial.print("jacobian: \n"); 
+        // Serial1.print("jacobian: \n"); 
         // Matrix.Print((mtx_type*) jacobian, 1, 3, "");
     }
     else

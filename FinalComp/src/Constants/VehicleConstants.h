@@ -20,11 +20,11 @@
 #define MAX_MOTOR_PWM_OUTPUT 80 // Maximum output pwm value of a motor, increase to go faster, lower to go slower
 
 // Some multipliers to make odometry estimate position better
-#define ODOMETRY_FORWARD_MULTIPLIER 1.00
+#define ODOMETRY_FORWARD_MULTIPLIER 1.05
 #define ODOMETRY_TURN_MULTIPLIER 0.98
 
 // Some multipliers to make left and right motor spin more evenly
-#define LEFT_MOTOR_PWM_MULTIPLIER 1.08
-#define RIGHT_MOTOR_PWM_MULTIPLIER 1.00
+#define LEFT_MOTOR_PWM_MULTIPLIER 1.00
+#define RIGHT_MOTOR_PWM_MULTIPLIER 1.08
 
 #endif // VEHICLE_CONSTANTS_H

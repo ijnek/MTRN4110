@@ -3,6 +3,7 @@
 #include "ExplorationMaze.h"
 #include "../Utils/MathUtil/MathUtil.h"
 #include "../Constants/MazeConstants.h"
+#include "../Constants/VehicleConstants.h"
 
 #define MAX_POSSIBLE_MOVE_DIRECTIONS 4
 
@@ -300,6 +301,31 @@ void Exploration::tick()
         blackboard.plan = BEHAVIOUR_NEXT_WAYPOINT;
         float nextWayPointX = CELL_SIZE * (mapY - EXPLORATION_STARTING_Y);
         float nextWayPointY = CELL_SIZE * (mapX - EXPLORATION_STARTING_X);
+
+        // offset so robot doesn't go too forward
+        if (mapX > prevMapX)
+        {
+            nextWayPointX -= WHEELS_OFFSET_X_MM;
+        }
+        else if (mapX < prevMapX)
+        {
+            nextWayPointX += WHEELS_OFFSET_X_MM;
+        }
+        else if (mapY > prevMapY)
+        {
+            nextWayPointY -= WHEELS_OFFSET_X_MM;
+        }
+        else if (mapY < prevMapY)
+        {
+            nextWayPointY += WHEELS_OFFSET_X_MM;
+        }
+
+        // String nextWayPoint = "nextWayPoint: " + String(nextWayPointX) + ", " + String(nextWayPointY);
+        // Serial1.println(nextWayPoint);
+
+        prevMapX = mapX;
+        prevMapY = mapY;
+
         float nextWayPointH = 0;  // initialise just in case
         switch(facingDirection)
         {
