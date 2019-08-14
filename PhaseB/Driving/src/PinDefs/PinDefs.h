@@ -16,9 +16,9 @@
 #define ENCODER_PIN_B_R 12
 
 // Define the pins for the left lidar
-#define LIDAR_LEFT_SHDN 23
+#define LIDAR_LEFT_SHDN 24
 #define LIDAR_RIGHT_SHDN 22
-#define LIDAR_FRONT_SHDN 24
+#define LIDAR_FRONT_SHDN 23
 
 // Define the pins for the leds
 #define LED_RED_DIGITAL_PIN 41
