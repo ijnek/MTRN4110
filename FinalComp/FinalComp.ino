@@ -6,6 +6,7 @@
 #include "src/Sensing/Sensing.h"
 #include "src/Communication/Communication.h"
 #include "src/Exploration/Exploration.h"
+#include "src/Planning/Planning.hpp"
 #include "src/LED/LED.h"
 #include <Wire.h>
 
@@ -14,6 +15,7 @@ Sensing sensing(blackboard);
 // Receiver receiver(blackboard);
 Localisation localisation(blackboard);
 Exploration exploration(blackboard);
+Planning planning(blackboard);
 Behaviour behaviour(blackboard);
 Motion motion(blackboard);
 LED led(blackboard);
@@ -32,7 +34,7 @@ void loop() {
     // planning.tick();
     behaviour.tick();
     motion.tick();
-    led.tick();
+    // led.tick();
 
     // Serial.print("pose: ");
     // Serial.print(blackboard.worldPose.x);

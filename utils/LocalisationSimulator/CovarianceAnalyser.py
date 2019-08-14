@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import argparse
 import tty
 import termios
-from matplotlib.patches import Ellipse
+from matplotlib.patches import Ellipse, Arrow
 import numpy as np
 from matplotlib import pyplot as plt
 from math import pi, cos, sin
@@ -35,6 +35,12 @@ def press(event):
     elif event.key == "right":
         index = min(index + 1, max_index)
 
+    print("index: ", index)
+    print("state: \n", state[index])
+
+    plt.cla()        
+
+    drawArrow(state[index])
     drawEllipse(state[index], covariance[index])
 
 def main():
@@ -45,27 +51,24 @@ def main():
     global max_index
     max_index = len(state) - 1
 
-    # fig = plt.figure(0)
-    # ax = fig.add_subplot(111, aspect='equal')
-
     global fig
     global ax
 
     fig, ax = plt.subplots()
     fig.canvas.mpl_connect('key_press_event', press)
+    
+    ax.set_xlim(-100, 2250+100)
+    ax.set_ylim(-100, 2250+100)
+    ax.set_aspect('equal', adjustable='box')
+
+    ax.set_xticks(np.arange(-125, 2250, 250))
+    ax.set_yticks(np.arange(-2250, 2250, 250))
+    plt.grid()
+    
     plt.show()
 
     while True:
         pass
-
-
-    '''
-    while True:
-        get()
-        # plot(state[index], covariance[index])
-        drawEllipse(state[index], covariance[index])
-        # drawSomeEllipses()
-    '''
 
 
 def parseArgs():
@@ -74,18 +77,6 @@ def parseArgs():
                         nargs='+')
 
     return parser.parse_args()
-
-
-def plot(state, covariance):
-    plt.figure()
-    ax = plt.gca()
-
-    ellipse = Ellipse(xy=(state[0], state[1]), width=0.036, height=0.012,
-                      edgecolor='r', fc='None', lw=2)
-    ax.add_patch(ellipse)
-
-    plt.legend(loc='upper right')
-    plt.show()
 
 
 def readFile(filepath):
@@ -108,49 +99,27 @@ def readFile(filepath):
     return state_list, covariance_list
 
 
+def drawArrow(state):
+    arrow_length = 250
+    arrow = Arrow(state[0], state[1], arrow_length * math.cos(state[2]), arrow_length * math.sin(state[2]), width=50, edgecolor="black", facecolor=None)
+    ax.add_artist(arrow)
+
+
 def drawEllipse(state, covariance):
-    # u = state[0]  # x-position of the center
-    # v = state[1]  # y-position of the center
-
-    # print(state)
-
-    # eig_vals = LA.eigvals(covariance)
-    # print(eig_vals)
-
-    # a = 2.  # radius on the x-axis
-    # b = 1.5  # radius on the y-axis
-    # t_rot = pi/4  # rotation angle
-
-    # t = np.linspace(0, 2*pi, 100)
-    # Ell = np.array([a*np.cos(t), b*np.sin(t)])
-    # # u,v removed to keep the same center location
-    # R_rot = np.array([[cos(t_rot), -sin(t_rot)], [sin(t_rot), cos(t_rot)]])
-    # # 2-D rotation matrix
-
-    # Ell_rot = np.zeros((2, Ell.shape[1]))
-    # for i in range(Ell.shape[1]):
-    #     Ell_rot[:, i] = np.dot(R_rot, Ell[:, i])
-
-    # eig_vals = LA.eigvals(covariance[0:2])
     eig_vals = LA.eigvals(covariance[0:2, 0:2])
-    print(eig_vals)
-
-    plt.cla()
-
-    print(covariance)
 
     r_major_axis = math.sqrt(max(eig_vals[0], eig_vals[1]))
     r_minor_axis = math.sqrt(min(eig_vals[0], eig_vals[1]))
     theta = math.atan2(2 * covariance[0, 1], (covariance[0, 0] - covariance[1, 1])) / 2.0
-    print(theta)
 
-    ellipse = Ellipse(xy=(state[0], state[1]), width=r_major_axis, height=r_minor_axis, angle=math.degrees(theta))
+    ellipse = Ellipse(xy=(state[0], state[1]), width=r_major_axis, height=r_minor_axis, angle=math.degrees(theta), edgecolor="red", facecolor=None)
 
     ax.add_artist(ellipse)
-    ellipse.set_clip_box(ax.bbox) 
+    ellipse.set_clip_box(ax.bbox)
 
-    ax.set_xlim(-100, 2250+100)
-    ax.set_ylim(-100, 2250+100)
+    ax.set_xticks(np.arange(-125, 2250, 250))
+    ax.set_yticks(np.arange(-2250, 2250, 250))
+    plt.grid()
 
     fig.canvas.draw()
 

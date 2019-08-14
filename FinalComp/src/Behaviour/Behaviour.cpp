@@ -7,6 +7,7 @@
 #include "BehaviourTurnRight.h"
 #include "BehaviourForwards.h"
 #include "BehaviourNextWayPoint.h"
+#include "BehaviourPlannedRoute.h"
 
 Behaviour::Behaviour(Blackboard &blackboard)
     : blackboard(blackboard), plans(plansArray)
@@ -17,6 +18,7 @@ Behaviour::Behaviour(Blackboard &blackboard)
     plans.push_back(new BehaviourTurnRight());
     plans.push_back(new BehaviourForwards());
     plans.push_back(new BehaviourNextWayPoint());
+    plans.push_back(new BehaviourPlannedRoute());
 }
 
 void Behaviour::tick()
@@ -31,6 +33,14 @@ void Behaviour::tick()
         if (blackboard.plan == BEHAVIOUR_NEXT_WAYPOINT)
         {
             reinterpret_cast<WayPointBehaviour*>(plans[blackboard.plan])->addWayPoint(blackboard.nextWayPoint);
+        }
+
+        if (blackboard.plan == BEHAVIOUR_PLANNED_ROUTE)
+        {
+            for (unsigned i = 0; i < blackboard.plannedWayPoints.size(); ++i)
+            {
+                reinterpret_cast<WayPointBehaviour*>(plans[blackboard.plan])->addWayPoint(blackboard.plannedWayPoints[i]);
+            }
         }
     }
 

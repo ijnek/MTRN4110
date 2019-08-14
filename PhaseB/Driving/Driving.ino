@@ -34,10 +34,10 @@ void loop() {
     localisation.tick();
     led.tick();
 
-    // Serial.print("pose: ");
-    // Serial.print(blackboard.worldPose.x);
-    // Serial.print(", ");
-    // Serial.print(blackboard.worldPose.y);
-    // Serial.print(", ");
-    // Serial.println(RAD2DEG(blackboard.worldPose.theta));
+     Serial.print("pose: ");
+     Serial.print(blackboard.worldPose.x);
+     Serial.print(", ");
+     Serial.print(blackboard.worldPose.y);
+     Serial.print(", ");
+     Serial.println(RAD2DEG(blackboard.worldPose.theta));
 }

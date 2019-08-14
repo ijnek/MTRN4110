@@ -11,7 +11,7 @@
 class Blackboard
 {
   public:
-    Blackboard(): gyroZ(0), plan(BEHAVIOUR_NONE), resetLocalisation(false), wallInFront(false), wallOnLeft(false), wallOnRight(false), commandCompleted(false), startDetected(true), nextMoveCommandReceived(false){}
+    Blackboard(): gyroZ(0), plan(BEHAVIOUR_NONE), resetLocalisation(false), wallInFront(false), wallOnLeft(false), wallOnRight(false), commandCompleted(false), startDetected(true), nextMoveCommandReceived(false), plannedWayPoints(plannedWayPointsArray){}
 
     Odometry odometryDiff;  // difference in odometry since last cycle
     MovementRequest movementRequest;  // current requested velocity
@@ -32,6 +32,8 @@ class Blackboard
     float lidarFront;  // distance of left lidar obstacle
     float lidarRight;  // distance of right lidar obstacle
     String encodedMaze;  // string that gets transmitted from vision or exploration to planning
+    WayPoint plannedWayPointsArray[15];  // Allocate some memory to use the waypoints vector
+    Vector<WayPoint> plannedWayPoints;  // planned way points from planning
 };
 
 #endif // BLACKBOARD_H

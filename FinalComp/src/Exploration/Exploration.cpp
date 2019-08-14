@@ -315,6 +315,7 @@ void Exploration::tick()
         // Serial.print(mapY);
         // Serial.print(", ");
         // Serial.println(facingDirection);
+        // Serial.println("nextWayPoint:");
         // Serial.print(nextWayPointX);
         // Serial.print(", ");
         // Serial.print(nextWayPointY);

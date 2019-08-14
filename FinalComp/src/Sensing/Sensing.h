@@ -94,27 +94,37 @@ public:
         firstTime = false;
     }
 
+    blackboard.lidarFront = lidars[LIDAR_FRONT].readRangeSingleMillimeters();
+    blackboard.lidarLeft = lidars[LIDAR_LEFT].readRangeSingleMillimeters();
+    blackboard.lidarRight = lidars[LIDAR_RIGHT].readRangeSingleMillimeters();
+
+    // Serial.println("lidars: ");
+    // Serial.println(blackboard.lidarFront);
+    // Serial.println(blackboard.lidarLeft);
+    // Serial.println(blackboard.lidarRight);
+
     if (!blackboard.startDetected)
     {
         // If we haven't detected the start, keep checking for the start
         bool prevWallInFront = blackboard.wallInFront;
-        blackboard.wallInFront = lidars[LIDAR_FRONT].readRangeSingleMillimeters() < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
-        blackboard.wallOnLeft = lidars[LIDAR_LEFT].readRangeSingleMillimeters() < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
-        blackboard.wallOnRight = lidars[LIDAR_RIGHT].readRangeSingleMillimeters() < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
+        blackboard.wallInFront = blackboard.lidarFront < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
+        blackboard.wallOnLeft = blackboard.lidarLeft < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
+        blackboard.wallOnRight = blackboard.lidarRight < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
         if (prevWallInFront == true && blackboard.wallInFront == false)
             blackboard.startDetected = true;
     }
     else if (blackboard.commandCompleted)
     {
-        // If we've just finished a command, then read lidars
-        blackboard.wallInFront = lidars[LIDAR_FRONT].readRangeSingleMillimeters() < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
-        blackboard.wallOnLeft = lidars[LIDAR_LEFT].readRangeSingleMillimeters() < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
-        blackboard.wallOnRight = lidars[LIDAR_RIGHT].readRangeSingleMillimeters() < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
-    }
 
-    // Serial.print(blackboard.wallInFront);
-    // Serial.print(blackboard.wallOnLeft);
-    // Serial.println(blackboard.wallOnRight);
+        blackboard.lidarFront = blackboard.lidarFront;
+        blackboard.lidarLeft = blackboard.lidarLeft;
+        blackboard.lidarRight = blackboard.lidarRight;
+
+        // If we've just finished a command, then read lidars
+        blackboard.wallInFront = blackboard.lidarFront < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
+        blackboard.wallOnLeft = blackboard.lidarLeft < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
+        blackboard.wallOnRight = blackboard.lidarRight < MAX_DISTNANCE_TO_CONSIDER_OBSTACLE;
+    }
   }
 
 private:
