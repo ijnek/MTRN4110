@@ -66,13 +66,13 @@ void Wheel::setDirectionToForwards(bool forwards)
     {
         if (forwards)
         {
-            digitalWrite(motorDirA, HIGH);
-            digitalWrite(motorDirB, LOW);
+            digitalWrite(motorDirA, LOW);
+            digitalWrite(motorDirB, HIGH);
         }
         else
         {
-            digitalWrite(motorDirA, LOW);
-            digitalWrite(motorDirB, HIGH);
+            digitalWrite(motorDirA, HIGH);
+            digitalWrite(motorDirB, LOW);
         }
     }
     else
@@ -102,13 +102,27 @@ void Wheel::encoderInterrupt()
     if (prevEncoderPinA == LOW && curr_state == HIGH)
     {
         int val = digitalRead(encoderPinB);
-        if (val == LOW && encoderDetectingForwardsRotation)
+        if (isLeftWheel)
         {
-            encoderDetectingForwardsRotation = false;
+            if (val == LOW && encoderDetectingForwardsRotation)
+            {
+                encoderDetectingForwardsRotation = false;
+            }
+            else if (val == HIGH && !encoderDetectingForwardsRotation)
+            {
+                encoderDetectingForwardsRotation = true;
+            }
         }
-        else if (val == HIGH && !encoderDetectingForwardsRotation)
+        else
         {
-            encoderDetectingForwardsRotation = true;
+            if (val == LOW && !encoderDetectingForwardsRotation)
+            {
+                encoderDetectingForwardsRotation = true;
+            }
+            else if (val == HIGH && encoderDetectingForwardsRotation)
+            {
+                encoderDetectingForwardsRotation = false;
+            }            
         }
     }
 
@@ -117,29 +131,13 @@ void Wheel::encoderInterrupt()
     // Increment/Decrementu the count
     if (encoderDetectingForwardsRotation)
     {
-        if (isLeftWheel)
-        {
             counts++;
             counterForOdometry++;
-        }
-        else
-        {
-            counts--;
-            counterForOdometry--;
-        }
     }
     else
     {
-        if (isLeftWheel)
-        {
             counts--;
             counterForOdometry--;
-        }
-        else
-        {
-            counts++;
-            counterForOdometry++;
-        }
     }
 }
 

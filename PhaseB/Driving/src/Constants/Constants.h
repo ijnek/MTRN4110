@@ -27,8 +27,8 @@
 #define ODOMETRY_TURN_MULTIPLIER 0.98
 
 // Some multipliers to make left and right motor spin more evenly
-#define LEFT_MOTOR_PWM_MULTIPLIER 1.08
-#define RIGHT_MOTOR_PWM_MULTIPLIER 1.00
+#define LEFT_MOTOR_PWM_MULTIPLIER 0.95
+#define RIGHT_MOTOR_PWM_MULTIPLIER 1.08
 
 // Bluetooth communication / Plans
 #define PLAN_NONE 0          // don't do anything
