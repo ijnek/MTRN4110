@@ -3,11 +3,11 @@
 
 
 // Definitions of close when going to waypoints
-#define CLOSE_DIST 60  // mm
+#define CLOSE_DIST 50  // mm
 #define CLOSE_DIST_SQUARED CLOSE_DIST*CLOSE_DIST  // mm^2
 #define NOT_CLOSE_DIST 30  // mm
 #define NOT_CLOSE_DIST_SQUARED CLOSE_DIST*CLOSE_DIST  // mm^2
-#define CLOSE_HEADING DEG2RAD(5)  // rad
+#define CLOSE_HEADING DEG2RAD(2)  // rad
 #define NOT_CLOSE_HEADING DEG2RAD(10)  // rad
 
 #define MIN_STAY_TICKS 2  // how many ticks to wait for once arriving at a waypoint
@@ -64,13 +64,13 @@ MovementRequest WayPointBehaviour::getMovementRequest(float myX, float myY, floa
             closeToFinalPoseCount++;
             // forwardAmount = 0;
             turnAmount = 0;
-            forwardAmount = (aimX - myX) * cos(myH) + (aimY - myY) * sin(myH);
+            forwardAmount = ((aimX - myX) * cos(myH) + (aimY - myY) * sin(myH) / 2);
         }
         else
         {
             // If our heading is not close, then correct our heading first
             forwardAmount = 0;
-            turnAmount = normaliseTheta(aimH - myH);
+            turnAmount = normaliseTheta(aimH - myH) / 2;
             closeToFinalPoseCount = 0;
         }
         distanceClose = true;
@@ -81,7 +81,7 @@ MovementRequest WayPointBehaviour::getMovementRequest(float myX, float myY, floa
         {
             // If our heading is correct, then just go forwards
             // forwardAmount = sqrtf(distanceErrorSquared(myX, myY, aimX, aimY));
-            forwardAmount = (aimX - myX) * cos(myH) + (aimY - myY) * sin(myH);
+            forwardAmount = ((aimX - myX) * cos(myH) + (aimY - myY) * sin(myH)) / 2;
             turnAmount = 0;
             headingClose = true;
         }
@@ -89,7 +89,7 @@ MovementRequest WayPointBehaviour::getMovementRequest(float myX, float myY, floa
         {
             // If our heading is not close, then correct our heading first
             forwardAmount = 0;
-            turnAmount = headingError(myX, myY, myH, aimX, aimY);
+            turnAmount = headingError(myX, myY, myH, aimX, aimY) / 2;
             headingClose = false;
         }
         distanceClose = false;
@@ -147,7 +147,7 @@ bool WayPointBehaviour::headingIsClose(float currentX, float currentY, float cur
 
 bool WayPointBehaviour::headingIsCloseToFinalHeading(float currentH, float finalHeading)
 {
-    if (fabs(normaliseTheta(finalHeading - currentH)) < DEG2RAD(4))
+    if (fabs(normaliseTheta(finalHeading - currentH)) < DEG2RAD(15))
     {
         return true;
     }

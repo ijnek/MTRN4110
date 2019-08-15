@@ -11,11 +11,6 @@
 #define WALL    1
 #define UNEXPL  2
 
-#define NORTH   0
-#define SOUTH   1
-#define EAST    2
-#define WEST    3
-
 #define N       5*9-1
 
 typedef struct position {

@@ -118,7 +118,7 @@ class ExplorationMaze
         String encodedString;
         encodedString += "H";
 
-        for (int row = startRow + 1; row <= endRow; ++row)
+        for (int row = startRow; row <= endRow+1; ++row)
         {
             for (int col = startCol; col <= endCol; ++col)
             {
@@ -146,7 +146,7 @@ class ExplorationMaze
         encodedString += "V";
         for (int row = startRow; row <= endRow; ++row)
         {
-            for (int col = startCol + 1; col <= endCol; ++col)
+            for (int col = startCol; col <= endCol+1; ++col)
             {
                 switch(verticalWall[row][col])
                 {

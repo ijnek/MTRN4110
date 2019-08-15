@@ -20,7 +20,11 @@ class Exploration
         facingDirection(EXPLORATION_STARTING_FACING_DIRECTION),
         startingPose(Unknown),
         prevMapX(mapX),
-        prevMapY(mapY)
+        prevMapY(mapY),
+        goal_6_4_reached(false),
+        goal_12_2_reached(false),
+        goal_10_4_reached(false),
+        goal_4_2_reached(false)
     {
     }
     void tick();
@@ -36,6 +40,11 @@ class Exploration
 
     int prevMapX;
     int prevMapY;
+
+    bool goal_6_4_reached;
+    bool goal_12_2_reached;
+    bool goal_10_4_reached;
+    bool goal_4_2_reached;
 };
 
 #endif // EXPLORATION_H
