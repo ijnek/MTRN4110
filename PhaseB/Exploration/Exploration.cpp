@@ -2,6 +2,7 @@
 #include "Vector.h"
 #include "ExplorationMaze.h"
 #include <iostream>
+#include "Planning.hpp"
 
 #define MAX_POSSIBLE_MOVE_DIRECTIONS 4
 
@@ -85,6 +86,24 @@ void Exploration::tick()
                 blackboard.startingPose = LeftTopFacingRight;
             }
         }
+    }
+
+    // check if we've accidentaly reached any of the goals
+    if (blackboard.x == 6 && blackboard.y == 4)
+    {
+        goal_6_4_reached = true;
+    }
+    else if (blackboard.x == 12 && blackboard.y == 2)
+    {
+        goal_12_2_reached = true;
+    }
+    else if (blackboard.x == 10 && blackboard.y == 4)
+    {
+        goal_10_4_reached = true;
+    }
+    else if (blackboard.x == 4 && blackboard.y == 2)
+    {
+        goal_4_2_reached = true;
     }
 
     if (!blackboard.reachedGoal)
@@ -180,6 +199,8 @@ void Exploration::tick()
     // Choose what move to make
     if (!possibleMoveDirections.empty())
     {
+        // If we haven't visited the goal yet, move in a direction towards the centre
+
         int goalX;
         int goalY;
 
@@ -213,7 +234,14 @@ void Exploration::tick()
             case Unknown:
             {
                 // minimise goalX;
-                goalX = -1;
+                if (blackboard.x > 8)
+                {
+                    goalX = 12;
+                }
+                else
+                {
+                    goalX = 4;
+                }
                 goalY = 4;
                 break;
             }

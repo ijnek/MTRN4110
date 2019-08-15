@@ -15,7 +15,11 @@ class Exploration
       : backTrackMoves(backTrackMovesArray),
         sensingSimulation(blackboard),
         blackboard(blackboard),
-        explorationMaze(blackboard)
+        explorationMaze(blackboard),
+        goal_6_4_reached(false),
+        goal_12_2_reached(false),
+        goal_10_4_reached(false),
+        goal_4_2_reached(false)
     {
         sensingSimulation.simulationMaze.printMaze();
     }
@@ -26,6 +30,11 @@ class Exploration
     SensingSimulation sensingSimulation;
     Blackboard &blackboard;
     ExplorationMaze explorationMaze;
+
+    bool goal_6_4_reached;
+    bool goal_12_2_reached;
+    bool goal_10_4_reached;
+    bool goal_4_2_reached;
 };
 
 #endif // EXPLORATION_H

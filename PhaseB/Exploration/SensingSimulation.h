@@ -4,9 +4,9 @@
 #include "ExplorationMaze.h"
 #include "Blackboard.h"
 
-// #include "MazeStartingLeftTopFacingDown.h"
+#include "MazeStartingLeftTopFacingDown.h"
 // #include "MazeStartingRightTopFacingLeft.h"
-#include "MazeStartingRightTopFacingDown.h"
+// #include "MazeStartingRightTopFacingDown.h"
 // #include "MazeStartingLeftTopFacingRight.h"
 
 
