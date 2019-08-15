@@ -1,6 +1,7 @@
 #ifndef PLANNING_HPP
 #define PLANNING_HPP
 
+#define __DEBUG__
 
 // For debugging without the Arduino library
 #ifdef __DEBUG__
