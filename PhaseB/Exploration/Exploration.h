@@ -1,6 +1,8 @@
 #ifndef EXPLORATION_H
 #define EXPLORATION_H
 
+#include "ExplorationMaze.h"
+// #include "ExplorationEnums.h"
 #include "Vector.h"
 #include "SensingSimulation.h"
 #include "Blackboard.h"
@@ -13,15 +15,21 @@ class Exploration
   public:
     Exploration(Blackboard &blackboard) 
       : backTrackMoves(backTrackMovesArray),
-        sensingSimulation(blackboard),
+      sensingSimulation(blackboard),
         blackboard(blackboard),
         explorationMaze(blackboard),
+        mapX(EXPLORATION_STARTING_X),
+        mapY(EXPLORATION_STARTING_Y),
+        facingDirection(EXPLORATION_STARTING_FACING_DIRECTION),
+        startingPose(Unknown),
+        prevMapX(mapX),
+        prevMapY(mapY),
         goal_6_4_reached(false),
         goal_12_2_reached(false),
         goal_10_4_reached(false),
         goal_4_2_reached(false)
     {
-        sensingSimulation.simulationMaze.printMaze();
+        sensingSimulation.simulationMaze.printMaze(mapX, mapY, facingDirection);
     }
     void tick();
 
@@ -30,6 +38,13 @@ class Exploration
     SensingSimulation sensingSimulation;
     Blackboard &blackboard;
     ExplorationMaze explorationMaze;
+    int mapX;
+    int mapY;
+    Direction facingDirection;
+    StartingPose startingPose;
+
+    int prevMapX;
+    int prevMapY;
 
     bool goal_6_4_reached;
     bool goal_12_2_reached;
