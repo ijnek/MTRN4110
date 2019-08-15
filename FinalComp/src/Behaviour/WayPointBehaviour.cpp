@@ -7,7 +7,7 @@
 #define CLOSE_DIST_SQUARED CLOSE_DIST*CLOSE_DIST  // mm^2
 #define NOT_CLOSE_DIST 30  // mm
 #define NOT_CLOSE_DIST_SQUARED CLOSE_DIST*CLOSE_DIST  // mm^2
-#define CLOSE_HEADING DEG2RAD(2)  // rad
+#define CLOSE_HEADING DEG2RAD(5)  // rad
 #define NOT_CLOSE_HEADING DEG2RAD(10)  // rad
 
 #define MIN_STAY_TICKS 2  // how many ticks to wait for once arriving at a waypoint
@@ -52,27 +52,15 @@ MovementRequest WayPointBehaviour::getMovementRequest(float myX, float myY, floa
 
     float aimX = wayPoints[wayPointIndex].x;
     float aimY = wayPoints[wayPointIndex].y;
-    float aimH = wayPoints[wayPointIndex].h;
 
     float forwardAmount;  // mm
     float turnAmount;  // rad
 
     if (distanceIsClose(myX, myY, aimX, aimY))
     {
-        if (headingIsCloseToFinalHeading(myH, aimH))
-        {
-            closeToFinalPoseCount++;
-            // forwardAmount = 0;
-            turnAmount = 0;
-            forwardAmount = ((aimX - myX) * cos(myH) + (aimY - myY) * sin(myH) / 2);
-        }
-        else
-        {
-            // If our heading is not close, then correct our heading first
-            forwardAmount = 0;
-            turnAmount = normaliseTheta(aimH - myH) / 2;
-            closeToFinalPoseCount = 0;
-        }
+        closeToFinalPoseCount++;
+        turnAmount = 0;
+        forwardAmount = ((aimX - myX) * cos(myH) + (aimY - myY) * sin(myH) / 2);
         distanceClose = true;
     }
     else

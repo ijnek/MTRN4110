@@ -12,6 +12,13 @@ class LED
         
     }
 
+    void reset()
+    {
+        firstTime = true;
+        previousStartDetected = false;
+        previousReachedGoal = false;
+    }
+
     void tick()
     {
         if (firstTime)

@@ -12,13 +12,29 @@
 Behaviour::Behaviour(Blackboard &blackboard)
     : blackboard(blackboard), plans(plansArray)
 {
-    // Add plans. Note, this must be in same order as listed in Constants.h
+    addPlans();
+}
+
+void Behaviour::reset()
+{
+    for (unsigned i = 0; i < plans.size(); ++i)
+    {
+        delete plans[i];
+    }
+    plans.clear();
+    addPlans();
+}
+
+void Behaviour::addPlans()
+{
+    // Add plans. Note, this must be in same order as listed in NetworkingConstants.h
     plans.push_back(new BehaviourNone());
     plans.push_back(new BehaviourTurnLeft());
     plans.push_back(new BehaviourTurnRight());
     plans.push_back(new BehaviourForwards());
     plans.push_back(new BehaviourNextWayPoint());
-    plans.push_back(new BehaviourPlannedRoute());
+    plans.push_back(new BehaviourPlannedRoute());  
+
 }
 
 void Behaviour::tick()

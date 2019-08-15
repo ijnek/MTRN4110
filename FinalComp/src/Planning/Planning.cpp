@@ -1,4 +1,5 @@
 #include "Planning.hpp"
+#include "../Exploration/ExplorationEnums.h"
 
 /*
  * Graph constructor
@@ -84,22 +85,22 @@ int* Maze::getAdjCells(Position p){
         // Make sure adjacent cell is within bounds
         if(!(p.col < 0 || p.col > orientation->col || p.row < 0 || p.row > orientation->row)){
             switch(i){
-                case 0: // North
+                case NORTH: // North
                     wallVal = hWalls[p.col + (orientation->col*p.row)];
                     row = p.row - 1;
                     col = p.col;
                     break;
-                case 1: // South
+                case SOUTH: // South
                     wallVal = hWalls[p.col + (orientation->col*p.row) + orientation->col];
                     row = p.row + 1;
                     col = p.col;
                     break;
-                case 2: // East
+                case EAST: // East
                     wallVal = vWalls[((orientation->col+1)*p.row) + p.col + 1];
                     row = p.row;
                     col = p.col + 1;
                     break;
-                case 3: // West
+                case WEST: // West
                     wallVal = vWalls[((orientation->col+1)*p.row) + p.col];
                     row = p.row;
                     col = p.col - 1;

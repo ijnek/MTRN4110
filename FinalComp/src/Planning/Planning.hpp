@@ -50,6 +50,8 @@ class Planning
     {
     }
 
+    void reset(){}  // planning is well-written, so nothing to do in reset
+
     void tick()
     {
         Position pathArray[15];
@@ -63,6 +65,10 @@ class Planning
         {
             blackboard.plannedWayPoints.push_back(WayPoint(path[i].row * 250, path[i].col * 250, 0));
         }
+
+        blackboard.plan = BEHAVIOUR_PLANNED_ROUTE;
+
+        delete maze;
     }
 };
 

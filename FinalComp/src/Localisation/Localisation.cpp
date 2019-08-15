@@ -6,23 +6,23 @@
 #define INITIAL_UNCERTAINTY_Y 50.0  // mm
 #define INITIAL_UNCERTAINTY_H DEG2RAD(10)  // rad
 
-#define LIDAR_LEFT_X 65.0  // mm
-#define LIDAR_LEFT_Y 80.0  //  mm
+#define LIDAR_LEFT_X 55.0  // mm
+#define LIDAR_LEFT_Y 50.0  //  mm
 #define LIDAR_LEFT_H DEG2RAD(90)  // rad
 
-#define LIDAR_RIGHT_X 65.0  // mm
-#define LIDAR_RIGHT_Y -70.0  // mm
+#define LIDAR_RIGHT_X 55.0  // mm
+#define LIDAR_RIGHT_Y -50.0  // mm
 #define LIDAR_RIGHT_H DEG2RAD(-90)  // rad
 
 #define LIDAR_FRONT_X 80.0  // mm
-#define LIDAR_FRONT_Y -35.0  // mm
+#define LIDAR_FRONT_Y 0.0  // mm
 #define LIDAR_FRONT_H 0.0  // rad
 
 #define LIDAR_UNCERTAINTY 40  // mm
 
 #define CELL_SIZE 250.0  // mm
 
-#define ODOMETRY_FORWARD_MULTIPLY_FACTOR 2.0
+#define ODOMETRY_FORWARD_MULTIPLY_FACTOR 1.0
 #define ODOMETRY_TURN_PROCESS_VARIANCE DEG2RAD(2) * DEG2RAD(2)
 
 
@@ -64,11 +64,6 @@ void Localisation::tick()
     if (blackboard.startDetected)
     {
 
-        if (blackboard.resetLocalisation)
-            reset();
-
-        blackboard.resetLocalisation = false;  // reset flag
-
         float forwardChange = blackboard.odometryDiff.forward;
         float turnChange = blackboard.odometryDiff.turn;
         float lidarFront = blackboard.lidarFront;
@@ -105,23 +100,23 @@ void Localisation::tick()
         }
     }
 
-    Serial1.print(state[0]);
-    Serial1.print(", ");
-    Serial1.print(state[1]);
-    Serial1.print(", ");
-    Serial1.print(state[2]);
-    Serial1.print(", ");
+    // Serial1.print(state[0]);
+    // Serial1.print(", ");
+    // Serial1.print(state[1]);
+    // Serial1.print(", ");
+    // Serial1.print(state[2]);
+    // Serial1.print(", ");
 
-    for (unsigned i = 0; i < 3; ++i)
-    {
-        for (unsigned j = 0; j < 3; ++j)
-        {
-            Serial1.print(covariance[i][j]);
-            if (i != 2 || j != 2)
-                Serial1.print(", ");
-        }
-    }
-    Serial1.print("\n");
+    // for (unsigned i = 0; i < 3; ++i)
+    // {
+    //     for (unsigned j = 0; j < 3; ++j)
+    //     {
+    //         Serial1.print(covariance[i][j]);
+    //         if (i != 2 || j != 2)
+    //             Serial1.print(", ");
+    //     }
+    // }
+    // Serial1.print("\n");
 
     blackboard.worldPose = Pose(state[0], state[1], state[2]);
 }

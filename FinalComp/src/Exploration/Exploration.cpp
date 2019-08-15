@@ -14,13 +14,27 @@ bool wallOnLeft = false;
 bool wallInFront = false;
 bool wallOnRight = false;
 
+void Exploration::reset()
+{
+    backTrackMoves.clear();
+    mapX = EXPLORATION_STARTING_X;
+    mapY = EXPLORATION_STARTING_Y;
+    facingDirection = EXPLORATION_STARTING_FACING_DIRECTION;
+    startingPose = Unknown;
+    prevMapX = mapX;
+    prevMapY = mapY;
+    goal_6_4_reached = false;
+    goal_12_2_reached = false;
+    goal_10_4_reached = false;
+    goal_4_2_reached = false;
+    explorationMaze.reset();
+}
+
 void Exploration::tick()
 {
     // If we've just finished a command, then read lidars
     if (blackboard.startDetected && blackboard.commandCompleted)
     {    
-
-        blackboard.nextMoveCommandReceived = false; // reset this flag
 
         int x = mapX;
         int y = mapY;

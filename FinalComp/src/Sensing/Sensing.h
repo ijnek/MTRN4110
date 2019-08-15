@@ -21,6 +21,8 @@ public:
     lidars[LIDAR_FRONT] = VL6180X();
     lidars[LIDAR_LEFT] = VL6180X();
     lidars[LIDAR_RIGHT] = VL6180X();
+    pinMode(RUN_RESTART_PIN, INPUT);
+    pinMode(MODE_SWITCH_PIN, INPUT);
   }
 
   void reset()
@@ -109,6 +111,10 @@ public:
         reset();
         firstTime = false;
     }
+
+    // Check for switches and buttons
+    blackboard.isExplorationRun = digitalRead(MODE_SWITCH_PIN);
+    blackboard.resetRequested = digitalRead(RUN_RESTART_PIN);
 
     blackboard.lidarFront = lidars[LIDAR_FRONT].readRangeSingleMillimeters();
     blackboard.lidarLeft = lidars[LIDAR_LEFT].readRangeSingleMillimeters();

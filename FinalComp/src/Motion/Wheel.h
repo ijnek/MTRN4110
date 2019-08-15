@@ -2,6 +2,7 @@
 #define WHEEL_HPP
 
 #include <stdint.h>
+#include <Arduino.h>
 #include "PID/PID.h"
 #include "../Types/Odometry.h"
 
@@ -16,6 +17,13 @@ class Wheel
     void encoderInterrupt();
     int getAndResetCounterForOdometry();
     void setAngularPosition(float angularPosition);  // set angular position, from start of run (rad)
+    void reset()
+    {
+      counterForOdometry = 0;
+      counts = 0;
+      setPointCounts = 0;
+      lastTime = millis();
+    }
 
 private:
     bool encoderDetectingForwardsRotation;

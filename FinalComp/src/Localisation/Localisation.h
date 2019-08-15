@@ -13,7 +13,6 @@ class Localisation
 
   private:
     Blackboard &blackboard;
-    unsigned long lastTime;
     mtx_type state[3];
     mtx_type covariance[3][3];
 

@@ -28,6 +28,7 @@ class Exploration
     {
     }
     void tick();
+    void reset();
 
     Direction backTrackMovesArray[MAX_BACKTRACK_MOVES];  // Allocate some memory to use the vector
     Vector<Direction> backTrackMoves;

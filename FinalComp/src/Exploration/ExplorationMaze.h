@@ -62,6 +62,11 @@ class ExplorationMaze
   public:
     ExplorationMaze()
     {
+        reset();
+    }
+
+    void reset()
+    {
         for (unsigned i = 0; i < EXPLORATION_GRID_ROWS; ++i)
         {
             for (unsigned j = 0; j < EXPLORATION_GRID_COLS; ++j)

@@ -24,4 +24,8 @@
 #define LED_RED_DIGITAL_PIN 43
 #define LED_GREEN_DIGITAL_PIN 41
 
+// Switches and buttons to transition
+#define RUN_RESTART_PIN 47
+#define MODE_SWITCH_PIN 49
+
 #endif // PIN_DEFS_HPP

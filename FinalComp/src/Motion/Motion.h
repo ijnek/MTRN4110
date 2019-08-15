@@ -11,10 +11,10 @@ class Motion
       : blackboard(blackboard) {}
       
     void tick();
+    void reset();
 
   private:
     Blackboard &blackboard;
-    MovementRequest currentCommand;
     
     void calculateWheelAngularPositions(MovementRequest &movementRequest, float &leftWheelAngularVelocity, float &rightWheelAngularVelocity);
     Odometry calculateOdometryDiff(int leftCounter, int rightCounter);  // calculate odometry difference since last tick

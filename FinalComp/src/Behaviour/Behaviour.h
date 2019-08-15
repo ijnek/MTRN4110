@@ -11,6 +11,8 @@ class Behaviour
   public:
     Behaviour(Blackboard &blackboard);
     void tick();
+    void reset();
+    void addPlans();
 
   private:
     Blackboard &blackboard;
