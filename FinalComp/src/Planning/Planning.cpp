@@ -194,17 +194,35 @@ void Maze::getPath(int val, int currPos, Vector<Position>& v){
     if(val == 1) return;
     
     // find the most suitable neighbour and add it to v
+    Position pos[4];
+    Vector<Position> candidates(pos);
     Position p = v.at(currPos);
     int* adjVals = getAdjCells(p);
-    for(int k = 0; k < 4; k++){
-        if(adjVals[k] == val-1){ // Update the value accordingly
+    for(int i = 0; i < 4; i++){ // Get potential neighbours
+        if(adjVals[i] == val-1){
             Position toAdd;
-            toAdd.row = p.row + getRow(k);
-            toAdd.col = p.col + getCol(k);
-            v.push_back(toAdd);
-            break;
+            toAdd.row = p.row + getRow(i);
+            toAdd.col = p.col + getCol(i);
+            candidates.push_back(toAdd);
         }
     }
+    if(v.size() > 1){
+        int size = v.size();
+        for(int i = 0; i < candidates.size(); i++){ // Get the one that takes the least turns
+            int difRow = abs(candidates.at(i).row - v.at(currPos-1).row);
+            int difCol = abs(candidates.at(i).col - v.at(currPos-1).col);
+            if(difRow != 1 && difCol != 1){ // Goes straight, add it
+                v.push_back(candidates.at(i));
+                break;
+            }
+        }
+        if(v.size() == size){ // Nothing was added, just add the first Position in candidates
+            v.push_back(candidates.at(0));
+        }
+    } else { // Just add the first Position in candidates
+        v.push_back(candidates.at(0));
+    }
+
 
     return getPath(val-1, currPos+1, v);
 }
