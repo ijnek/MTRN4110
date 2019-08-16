@@ -1,6 +1,7 @@
 #include "Localisation.h"
 #include "../Constants/VehicleConstants.h"
 #include "../Utils/MathUtil/MathUtil.h"
+#include "../Exploration/ExplorationEnums.h"
 
 #define INITIAL_UNCERTAINTY_X 50.0  // mm
 #define INITIAL_UNCERTAINTY_Y 50.0  // mm
@@ -51,9 +52,16 @@ void Localisation::reset()
     }
     else
     {
+        // translate from map coords to localisation coords
         state[0] = (blackboard.encodedMaze[1]-48)*250.0;
         state[1] = (blackboard.encodedMaze[2]-48)*250.0;
-        state[2] = 0;
+        switch(blackboard.encodedMaze[3]-48)
+        {
+            case (NORTH): state[2] = DEG2RAD(180); break;
+            case (EAST): state[2] = DEG2RAD(90); break;
+            case (WEST): state[2] = DEG2RAD(-90); break;
+            default: state[2] = 0; break;
+        }
     }
 
     for (unsigned i = 0; i < 3; ++i)

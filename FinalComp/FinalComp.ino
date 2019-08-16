@@ -30,6 +30,7 @@ void setup() {
 }
 
 void loop() {
+    led.tick();
     sensing.tick();
 
     // in case the reset button is pressed, do a reset
@@ -48,14 +49,20 @@ void loop() {
 
     if (blackboard.isVisionRun)
     {
-        if (!blackboard.pathPlanned && blackboard.startDetected)
+        if (!blackboard.startDetected)
         {
             communication.tick();
-            if (blackboard.encodedMaze != "")
-            {
-                planning.tick();
-                blackboard.pathPlanned = true;
-            }
+            planning.tick();
+            blackboard.pathPlanned = true;
+
+            localisation.reset();
+            exploration.reset();
+            planning.reset();
+            behaviour.reset();
+            motion.reset();
+            led.reset();
+
+            blackboard.startDetected = true;
         }
     }
     else if (blackboard.isExplorationRun)
@@ -74,7 +81,6 @@ void loop() {
     behaviour.tick();
 
     motion.tick();
-    led.tick();
 
     // String out = "pose: " + String(blackboard.worldPose.x) + ", " + String(blackboard.worldPose.y) + ", " + RAD2DEG(blackboard.worldPose.theta);
     String out = String(blackboard.worldPose.x) + ", " + String(blackboard.worldPose.y) + ", " + RAD2DEG(blackboard.worldPose.theta);

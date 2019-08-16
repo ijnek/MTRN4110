@@ -145,7 +145,7 @@ public:
     // Serial.print(", ");
     // Serial.println(blackboard.lidarRight);
 
-    if (!blackboard.startDetected)
+    if (!blackboard.startDetected && !blackboard.isVisionRun)
     {
         // If we haven't detected the start, keep checking for the start
         bool prevWallInFront = blackboard.wallInFront;
