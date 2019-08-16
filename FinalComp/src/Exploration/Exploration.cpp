@@ -286,7 +286,7 @@ void Exploration::tick()
 
 
             // If we've gone past the goal before, head back there
-            Position pathArray[15];
+            Position pathArray[30];
             Vector<Position> path(pathArray);
             Maze *maze = new Maze(blackboard.encodedMaze);
             maze->shortestPath(path);

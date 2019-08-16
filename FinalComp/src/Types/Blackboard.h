@@ -65,7 +65,7 @@ class Blackboard
     float lidarFront;  // distance of left lidar obstacle
     float lidarRight;  // distance of right lidar obstacle
     String encodedMaze;  // string that gets transmitted from vision or exploration to planning
-    WayPoint plannedWayPointsArray[15];  // Allocate some memory to use the waypoints vector
+    WayPoint plannedWayPointsArray[30];  // Allocate some memory to use the waypoints vector
     Vector<WayPoint> plannedWayPoints;  // planned way points from planning
     bool isExplorationRun;  // whether the run is an exploration is an Exploration Run
     bool isVisionRun;  // whether the run is a vision run

@@ -42,8 +42,6 @@ Localisation::Localisation(Blackboard &blackboard)
 
 void Localisation::reset()
 {
-    blackboard.worldPose = Pose(-WHEELS_OFFSET_X_MM, 0, 0);
-
     if (blackboard.isExplorationRun)
     {
         state[0] = -WHEELS_OFFSET_X_MM;
@@ -74,6 +72,15 @@ void Localisation::reset()
     covariance[0][0] = INITIAL_UNCERTAINTY_X * INITIAL_UNCERTAINTY_X;
     covariance[1][1] = INITIAL_UNCERTAINTY_Y * INITIAL_UNCERTAINTY_Y;
     covariance[2][2] = INITIAL_UNCERTAINTY_H * INITIAL_UNCERTAINTY_H;
+
+    blackboard.worldPose = Pose(state[0], state[1], state[2]);
+
+    // Serial.print("state[0]: ");
+    // Serial.println(state[0]);
+    // Serial.print("state[1]: ");
+    // Serial.println(state[1]);
+    // Serial.print("state[2]: ");
+    // Serial.println(state[2]);
 }
 
 void Localisation::tick()
