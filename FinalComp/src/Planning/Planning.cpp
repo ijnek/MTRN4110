@@ -12,16 +12,26 @@ Maze::Maze(String str){
     int Spos = str.indexOf("S");    // Position and heading
     int Hpos = str.indexOf("H");    // Horizontal walls
     int Vpos = str.indexOf("V");    // vertical walls
+
+    // Serial.print("HPos: ");
+    // Serial.println(Hpos);
     
     #ifdef __DEBUG__
         String S = str.substring(Spos+1, Hpos-1);
         String H = str.substring(Hpos+1, Vpos-Hpos-1);
         String V = str.substring(Vpos+1);
     #else
-        String S = str.substring(Spos+1, Hpos-1);
-        String H = str.substring(Hpos+1, Vpos-1);
+        String S = str.substring(Spos+1, Hpos);
+        String H = str.substring(Hpos+1, Vpos);
         String V = str.substring(Vpos+1);
     #endif
+
+    // Serial.print("S:: ");
+    // Serial.println(S);
+    // Serial.print("H:: ");
+    // Serial.println(H);
+    // Serial.print("V:: ");
+    // Serial.println(V);
 
     // Fill origin, heading, hNum and vNum
     origin = new Position;
@@ -29,7 +39,11 @@ Maze::Maze(String str){
     origin->col = S[1] - 48;
     heading = S[2] - 48;
     hNum = H.length();
+    // Serial.print("hNUm: ");
+    // Serial.println(hNum);
     vNum = V.length();
+    // Serial.print("vNum: ");
+    // Serial.println(vNum);
 
     // Figure out the orientation
     orientation = new Position;
@@ -164,6 +178,23 @@ void Maze::floodFill(){
             cells[i][j] = N;
         }
     }
+
+    // Serial.print("orietntation->row: ");
+    // Serial.println(orientation->row);
+
+    // Serial.print("orietntation->col: ");
+    // Serial.println(orientation->col);
+
+    // Serial.println("mapbefore:");
+    // for(int i = 0; i < orientation->row; i++) {
+    //     for(int j = 0; j < orientation->col; j++) {
+    //         Serial.print(cells[i][j]);
+    //     }
+    //     Serial.println("");
+    // }
+    // Serial.println("");
+
+
     cells[origin->row][origin->col] = 0; // Starting cell
     int currVal = 0;        // Value we currently have
     int updated = 1;       // Flag to check if cells has been updated
@@ -186,8 +217,18 @@ void Maze::floodFill(){
                 }
             }
         }
+        // Serial.println("updated");
         currVal++;
     }
+
+    // Serial.println("map:");
+    // for(int i = 0; i < orientation->row; i++) {
+    //     for(int j = 0; j < orientation->col; j++) {
+    //         Serial.print(cells[i][j]);
+    //     }
+    //     Serial.println("");
+    // }
+    // Serial.println("");
 }
 
 
@@ -231,8 +272,15 @@ void Maze::getPath(int val, int currPos, Vector<Position>& v){
 void Maze::shortestPath(Vector<Position>& path){
     floodFill();
 
+    // Serial.print(orientation->row);
+    // Serial.print(", ");
+    // Serial.print(orientation->col);
+
     int goalVal = cells[orientation->row/2][orientation->col/2];
-    if(goalVal == N) return; // No valid path exists
+    if(goalVal == N){
+        // Serial.println("no valid path");
+        return; // No valid path exists
+    }
 
     Position p;
     p.row = orientation->row/2;

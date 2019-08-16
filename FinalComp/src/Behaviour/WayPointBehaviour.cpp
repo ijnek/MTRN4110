@@ -1,5 +1,6 @@
 #include "WayPointBehaviour.h"
 #include "../Utils/MathUtil/MathUtil.h"
+#include "../Constants/MazeConstants.h"
 
 
 // Definitions of close when going to waypoints
@@ -7,8 +8,8 @@
 #define CLOSE_DIST_SQUARED CLOSE_DIST*CLOSE_DIST  // mm^2
 #define NOT_CLOSE_DIST 30  // mm
 #define NOT_CLOSE_DIST_SQUARED CLOSE_DIST*CLOSE_DIST  // mm^2
-#define CLOSE_HEADING DEG2RAD(5)  // rad
-#define NOT_CLOSE_HEADING DEG2RAD(10)  // rad
+#define SIDE_WAYS_ERROR_CLOSE 30  // mm
+#define SIDE_WAYS_ERROR_NOT_CLOSE 50  // mm
 
 #define MIN_STAY_TICKS 2  // how many ticks to wait for once arriving at a waypoint
 
@@ -123,24 +124,16 @@ float WayPointBehaviour::headingError(float currentX, float currentY, float curr
 bool WayPointBehaviour::headingIsClose(float currentX, float currentY, float currentH, float aimX, float aimY)
 {
     // Have hysteresis to prevent flickering
+    float distanceError = min(CELL_SIZE, sqrt(distanceErrorSquared(currentX, currentY, aimX, aimY)));  // no bigger than one cell
+    float absHeadingError = abs(headingError(currentX, currentY, currentH, aimX, aimY));
+    float sideWaysError = distanceError * sin(absHeadingError);
+
     if (headingClose)
     {
-        return fabs(headingError(currentX, currentY, currentH, aimX, aimY)) < NOT_CLOSE_HEADING;
+        return sideWaysError < SIDE_WAYS_ERROR_NOT_CLOSE;
     }
     else
     {
-        return fabs(headingError(currentX, currentY, currentH, aimX, aimY)) < CLOSE_HEADING;
-    }
-}
-
-bool WayPointBehaviour::headingIsCloseToFinalHeading(float currentH, float finalHeading)
-{
-    if (fabs(normaliseTheta(finalHeading - currentH)) < DEG2RAD(15))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
+        return sideWaysError < SIDE_WAYS_ERROR_CLOSE;
     }
 }

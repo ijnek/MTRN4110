@@ -17,7 +17,8 @@
 #define MOTOR_K_P 4.50
 #define MOTOR_K_I 0.00
 #define MOTOR_K_D 8.00
-#define MAX_MOTOR_PWM_OUTPUT 80 // Maximum output pwm value of a motor, increase to go faster, lower to go slower
+#define MAX_MOTOR_PWM_OUTPUT 130 // Maximum output pwm value of a motor, increase to go faster, lower to go slower
+// #define MAX_MOTOR_PWM_OUTPUT 80 // Maximum output pwm value of a motor, increase to go faster, lower to go slower
 
 // Some multipliers to make odometry estimate position better
 #define ODOMETRY_FORWARD_MULTIPLIER 1.05

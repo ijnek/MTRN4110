@@ -63,6 +63,12 @@ void Behaviour::tick()
     // Once we're done with a plan, reset plan to None on the blackboard
     if (plans[blackboard.plan]->done())
     {
+        // If we're performing a planned route, we're in a speed run. If we finish it, then notify the leds that we're done
+        if (blackboard.plan == BEHAVIOUR_PLANNED_ROUTE)
+        {
+            blackboard.reachedGoal = true;
+        }
+
         blackboard.plan = BEHAVIOUR_NONE;
         blackboard.commandCompleted = true;
     }

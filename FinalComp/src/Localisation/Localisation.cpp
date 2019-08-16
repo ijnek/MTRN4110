@@ -43,9 +43,18 @@ void Localisation::reset()
 {
     blackboard.worldPose = Pose(-WHEELS_OFFSET_X_MM, 0, 0);
 
-    state[0] = -WHEELS_OFFSET_X_MM;
-    state[1] = 0;
-    state[2] = 0;
+    if (blackboard.isExplorationRun)
+    {
+        state[0] = -WHEELS_OFFSET_X_MM;
+        state[1] = 0;
+        state[2] = 0;
+    }
+    else
+    {
+        state[0] = (blackboard.encodedMaze[1]-48)*250.0;
+        state[1] = (blackboard.encodedMaze[2]-48)*250.0;
+        state[2] = 0;
+    }
 
     for (unsigned i = 0; i < 3; ++i)
     {

@@ -17,18 +17,33 @@ void Motion::tick()
     float leftWheelAngularPosition;  // left wheel angular position (rad)
     float rightWheelAngularPosition;  // right wheel angular position (rad)
 
-    calculateWheelAngularPositions(blackboard.movementRequest, leftWheelAngularPosition, rightWheelAngularPosition);
-    wheelL.setAngularPosition(leftWheelAngularPosition);
-    wheelR.setAngularPosition(rightWheelAngularPosition);
+    if (blackboard.startDetected && !blackboard.reachedGoal)
+    {
+        calculateWheelAngularPositions(blackboard.movementRequest, leftWheelAngularPosition, rightWheelAngularPosition);
+        wheelL.setAngularPosition(leftWheelAngularPosition);
+        wheelR.setAngularPosition(rightWheelAngularPosition);
 
-    // Tick the wheels
-    wheelL.tick();
-    wheelR.tick();
+        // Tick the wheels
+        wheelL.tick();
+        wheelR.tick();
+    }
+    else
+    {
+        // Turn off motors...?
+        analogWrite(MOTOR_EN_L, 0);
+        analogWrite(MOTOR_EN_R, 0);
+    }
 
     // Update odometry diff
     blackboard.odometryDiff = calculateOdometryDiff(
         wheelL.getAndResetCounterForOdometry(),
         wheelR.getAndResetCounterForOdometry());
+}
+
+void Motion::reset()
+{
+    wheelL.reset();
+    wheelR.reset();
 }
 
 /*
