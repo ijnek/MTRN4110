@@ -42,7 +42,7 @@ Localisation::Localisation(Blackboard &blackboard)
 
 void Localisation::reset()
 {
-    if (blackboard.isExplorationRun)
+    if (blackboard.isExplorationRun && !blackboard.isVisionRun)
     {
         state[0] = -WHEELS_OFFSET_X_MM;
         state[1] = 0;
