@@ -26,6 +26,6 @@
 
 // Some multipliers to make left and right motor spin more evenly
 #define LEFT_MOTOR_PWM_MULTIPLIER 1.00
-#define RIGHT_MOTOR_PWM_MULTIPLIER 1.10
+#define RIGHT_MOTOR_PWM_MULTIPLIER 1.12
 
 #endif // VEHICLE_CONSTANTS_H
